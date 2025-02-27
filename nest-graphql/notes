@@ -1,0 +1,114 @@
+http://localhost:3000/graphql
+npm i --save @nestjs/typeorm pg  
+mutation {
+  createAuthor(name: "John Doe") {
+    id
+    name
+  }
+}
+mutation {
+  createPost(title: "Sample Post", 
+    authorId: "cff60b9f-9189-4beb-8023-1694e30f340e") {
+    id
+    title
+    author {
+      id
+      name
+    }
+  }
+}
+query {
+  post {
+    id
+    title
+    author {
+      id
+      name
+    }
+  }
+}
+query {
+  authors {
+    id
+    name
+    posts {
+      id
+      title
+    }
+  }
+}
+query {
+  post {
+    id
+    title
+    author {
+      id
+      name
+      posts {
+        id
+        title
+      }
+    }
+  }
+}
+
+query {
+  getUser(id:"4073dc88-ea63-4f47-932a-61014787d22b"){
+    id
+    title
+  },
+}
+
+
+query {
+  getStudent(limit:10,offset:2)  {
+		student {
+	  	  id
+    		fname
+		}
+		paginationObject {
+				total
+		}
+	}
+}
+
+
+mutation {
+  createStudent(createStudentInputDto: { 
+    fname: "John", 
+    lname: "Doe", 
+    email: "john.doe@example.com", 
+    dob: "1990-05-15"
+  }) {
+    id
+    fname
+    lname
+    email
+    dob
+  }
+}
+
+
+mutation {
+  updateStudent(UpdateStudentInput: { 
+    fname: "John", 
+    lname: "Doe", 
+    email: "john.doe@example.com", 
+    dob: "1990-05-15",
+    id:"9ed8a8e1-72a6-4ba0-b288-7ae7eff198b9"
+  }) {
+    id
+    fname
+    lname
+    email
+    dob
+  }
+}
+
+
+ docker build -t test-1 -f Dockerfile ./ 
+ docker build -t test-2 -f Dockerfile ./
+ docker build -t employee -f Dockerfile-final ./
+docker run -p 3000:3000 --name test-2 test-2
+docker run -p 3000:3000 --name test-1 test-1
+

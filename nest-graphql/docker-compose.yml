@@ -1,0 +1,62 @@
+services:
+  kafka-local:
+    image: apache/kafka-native
+    ports:
+      - "9092:9092"
+    environment:
+      # Configure listeners for both docker and host communication
+      KAFKA_LISTENERS: CONTROLLER://localhost:9091,HOST://0.0.0.0:9092,DOCKER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: HOST://localhost:9092,DOCKER://kafka:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,DOCKER:PLAINTEXT,HOST:PLAINTEXT
+
+      # Settings required for KRaft mode
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9091
+
+      # Listener to use for broker-to-broker communication
+      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER
+
+      # Required for a single node cluster
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  # postgres:
+  #   image: postgres:14-alpine
+  #   container_name: DB
+  #   ports:
+  #     - "5433:5432"
+  #   volumes:
+  #     - ~/apps/postgres:/var/lib/postgresql/data
+  #   environment:
+  #     - POSTGRES_PASSWORD=123
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_DB=postgres
+
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --save 60 1 --loglevel warning
+
+volumes:
+  redis_data:
+    driver: local
+
+  # app:
+  #   container_name: nestjs_app
+  #   build:
+  #     context: . 
+  #     dockerfile: DockerfileTets
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     NODE_ENV: production
+  #   depends_on:
+  #     - postgres
+  #     - kafka

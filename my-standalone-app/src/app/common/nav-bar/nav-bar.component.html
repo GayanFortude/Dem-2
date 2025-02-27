@@ -1,0 +1,32 @@
+<div class="custom-content">
+  <div class="custom-toolbar">
+    <button
+      kendoButton
+      [svgIcon]="menuSvg"
+      fillMode="flat"
+      (click)="drawer.toggle()"
+    ></button>
+    <span class="mail-box">My Kendo</span>
+  </div>
+  <div>
+    <kendo-drawer-container>
+      <div>
+        <kendo-drawer
+          class="custom-drawer"
+          #drawer
+          [items]="items"
+          mode="push"
+          [mini]="true"
+          [expanded]="true"
+          (select)="onSelect($event)"
+        >
+        </kendo-drawer>
+      </div>
+      <div>
+        <kendo-drawer-content class="custom-content-column">
+          <router-outlet style="height: 10px"></router-outlet>
+        </kendo-drawer-content>
+      </div>
+    </kendo-drawer-container>
+  </div>
+</div>

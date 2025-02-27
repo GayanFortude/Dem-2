@@ -1,0 +1,45 @@
+# Base image for development
+FROM node:20 AS base
+WORKDIR /usr/src/app
+
+# Check npm version and update
+RUN npm -v
+RUN npm i -g npm@7.24.2
+RUN npm -v
+
+# Install dependencies
+COPY package.json ./
+RUN npm install
+RUN npm i -g rimraf
+RUN rm -f package.json
+
+# Build stage
+FROM base AS build
+COPY . .
+RUN npm run build
+
+# Production image
+FROM node:20-alpine AS prod
+WORKDIR /usr/src/app
+
+# Set environment variables
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
+
+# Install only production dependencies
+COPY package.json ./
+RUN npm install --only=production
+RUN rm -f package.json
+
+# Copy built files from build stage
+COPY --from=build /usr/src/app/dist ./dist
+
+# Set permissions and switch to a non-root user
+RUN chown node:node -R /usr/src/app/dist
+USER node
+
+# Expose application port
+EXPOSE 3000
+
+# Start the application
+CMD ["node", "dist/main"]

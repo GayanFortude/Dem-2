@@ -1,0 +1,82 @@
+/* Drawer  */
+
+html,
+body,
+my-app {
+    padding: 0;
+    height: 100%;
+}
+
+my-app {
+    display: flex;
+    flex-direction: column;
+}
+
+kendo-drawer-container {
+    flex: 1 1 auto;
+    overflow-y: auto;
+}
+
+.k-icon {
+    font-size: 20px;
+}
+
+.custom-toolbar {
+    width: 95%;
+    background-color: rgb(88, 18, 18);
+    line-height: 10px;
+    margin: 0px 0px 10px 10px;
+    border-radius: 7px;
+    border: 100px;
+    border-bottom-width: 1px;
+    padding: 3px 8px;
+    display: block;
+    border-bottom: inset 1px #aa9c9c;
+    color: #e2e1e8;
+}
+.custom-drawer {
+    border-radius: 7px; 
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    position: relative;
+    background-color: #eddfd5;
+    margin: 0px 10px 10px 10px;
+  }
+  
+
+.custom-content {
+    display: block;
+    top: 0;
+    left: 0;
+    color: #eddfd5;
+}
+
+
+
+.custom-content-column {
+    display: flex;
+    flex-direction: column;
+    border-radius: 7px;
+    height: auto;
+    margin: 0px 0px 10px 30px;
+}
+
+.mail-box {
+    margin-left: 20px;
+    font-weight: bold;
+    font-size: 17px;
+}
+
+.headerCustomClass {
+    color: #fff;
+    background-color: gray;
+}
+.content-new{
+    border-top: 100;
+}
+
+th.headerCustomClass {
+    justify-content: right;
+}
+/* ---------------------------- */

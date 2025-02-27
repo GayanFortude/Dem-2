@@ -1,0 +1,112 @@
+<div class="content-new">
+  <div class="content-2">
+    <diV class="card-list">
+      <kendo-card width="360px">
+        <kendo-card-header class="k-hstack">
+          <div>
+            <h1 kendoCardTitle>File handling</h1>
+          </div>
+        </kendo-card-header>
+        <kendo-card-body class="card-body">
+          <kendo-upload
+            [multiple]="false"
+            (upload)="onUpload($event)"
+            [autoUpload]="false"
+          >
+          </kendo-upload>
+        </kendo-card-body>
+      </kendo-card>
+      <kendo-card width="360px">
+        <kendo-card-header class="k-hstack">
+          <div>
+            <h1 kendoCardTitle>Manual handling</h1>
+          </div>
+        </kendo-card-header>
+        <kendo-card-body class="card-body">
+          <button
+            class="card-button"
+            [svgIcon]="userIcon"
+            kendoButton
+            (click)="onAdd()"
+          ></button>
+          <button
+            class="card-button"
+            [svgIcon]="redoIcon"
+            kendoButton
+            (click)="loadMore()"
+          ></button>
+          <button
+            class="card-button"
+            [svgIcon]="downloadIcon"
+            kendoButton
+            (click)="downloadFile()"
+          ></button>
+        </kendo-card-body>
+      </kendo-card>
+    </diV>
+
+    <kendo-drawer-content class="custom-content">
+      <kendo-grid
+        class="custom-content-column"
+        #grid
+        [data]="data | async"
+        [loading]="loading"
+        [height]="400"
+        (scrollBottom)="loadMore(false)"
+        (edit)="editHandler($event)"
+        (remove)="removeHandler($event)"
+        (add)="addHandler()"
+      >
+        <!-- <kendo-grid-column field="id" [width]="80" title="ID"></kendo-grid-column> -->
+        <kendo-grid-column
+          field="fname"
+          title="First Name"
+          [width]="100"
+        ></kendo-grid-column>
+        <kendo-grid-column
+          field="lname"
+          title="Last Name"
+          [width]="100"
+        ></kendo-grid-column>
+        <kendo-grid-column
+          field="email"
+          title="Email"
+          [width]="150"
+        ></kendo-grid-column>
+        <kendo-grid-column field="dob" title="Date of Birth" [width]="100">
+          <ng-template kendoGridCellTemplate let-dataItem>
+            {{ dataItem.dob | date : "dd/MM/yyyy" }}
+          </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column
+          field="age"
+          title="Age"
+          [width]="50"
+        ></kendo-grid-column>
+        <kendo-grid-command-column
+          title="Command"
+          [width]="150"
+          styles="card-list"
+        >
+          <ng-template kendoGridCellTemplate>
+            <button kendoGridEditCommand [primary]="true">Edit</button>
+            <button kendoGridRemoveCommand>Delete</button>
+          </ng-template>
+        </kendo-grid-command-column>
+      </kendo-grid>
+      <app-student-view-edit-modal
+        [model]="editDataItem"
+        [isNew]="isNew"
+        (save)="saveHandler($event)"
+        (cancel)="cancelHandler()"
+      >
+      </app-student-view-edit-modal>
+      <app-filedownload
+        [isNew]="isNewFile"
+        (save)="saveFileHandler($event)"
+        (cancel)="cancelFileHandler()"
+      >
+      </app-filedownload>
+    </kendo-drawer-content>
+  </div>
+</div>

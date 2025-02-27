@@ -1,0 +1,36 @@
+<kendo-dialog
+  class="custom-dialog"
+  *ngIf="active"
+  [width]="300"
+  [height]="200"
+  (close)="closeForm()"
+>
+  <kendo-dialog-titlebar> File Download </kendo-dialog-titlebar>
+
+  <form novalidate class="k-form k-form-md" [formGroup]="editForm">
+    <kendo-formfield>
+      <kendo-label
+        [for]="Age"
+        text="Age"
+        labelCssClass="k-form-label"
+      ></kendo-label>
+      <kendo-textbox #Age formControlName="age" required></kendo-textbox>
+      <kendo-formhint>Type Age</kendo-formhint>
+      <kendo-formerror *ngIf="editForm.get('age')?.hasError('required')">
+        Error: Age is required
+      </kendo-formerror>
+    </kendo-formfield>
+  </form>
+
+  <kendo-dialog-actions layout="start">
+    <button kendoButton themeColor="primary" [svgIcon]="saveIcon" [disabled]="!editForm.valid" (click)="onSave($event)">
+      Save
+    </button>
+    <button kendoButton 
+    [svgIcon]="cancelIcon"
+     (click)="onCancel($event)">
+      Cancel
+    </button>
+  </kendo-dialog-actions>
+  
+</kendo-dialog>
