@@ -15,7 +15,7 @@ import { HttpModule, HttpService } from '@nestjs/axios';
 import { SharedModule } from './common/sharedmodule';
 //host.docker.internal
 @Module({
-  imports: [StudentModule,KafkaModule,ExcelModule,SharedModule,
+  imports: [StudentModule,KafkaModule,ExcelModule,
     TypeOrmModule.forFeature([Student]),
     TypeOrmModule.forRoot({
       type: 'postgres',
