@@ -4,24 +4,12 @@
     </kendo-dialog-titlebar>
   
     <form novalidate class="k-form k-form-md" [formGroup]="editForm">
-
-  
       <kendo-formfield>
         <kendo-label [for]="name" text="Course Name" labelCssClass="k-form-label"></kendo-label>
         <kendo-textbox #name formControlName="name" required></kendo-textbox>
         <kendo-formhint>Type Course name</kendo-formhint>
         <kendo-formerror>Error: Course name is required</kendo-formerror>
       </kendo-formfield>
-
-      <kendo-dropdownlist
-      [data]="courses"
-      textField="id"
-      valueField="id"
-      [defaultItem]="{ id: 'Select a course' }"
-      (valueChange)="onCourseChange($event)"
-    >
-    </kendo-dropdownlist>
-  
     </form>
   
     <kendo-dialog-actions layout="start">

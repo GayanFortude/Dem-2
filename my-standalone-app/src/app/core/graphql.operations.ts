@@ -9,6 +9,7 @@ export const GET_STUDENTS = gql`
         lname
         email
         dob
+        courseID
         age
       }
       paginationObject {

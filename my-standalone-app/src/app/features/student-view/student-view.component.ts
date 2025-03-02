@@ -201,7 +201,7 @@ export class StudentViewComponent {
 
   onAdd(): void {
     //add
-    this.editDataItem = { dob: null, email: '', fname: null, lname: null };
+    this.editDataItem = { dob: null, email: '', fname: null, lname: null ,courseId:null};
     this.isNew = true;
   }
 
@@ -293,7 +293,7 @@ export class StudentViewComponent {
           fname: student.fname,
           lname: student.lname,
           email: student.email,
-          courseID:student.courseId,
+          courseID:student.courseID,
           dob: formattedDate.toString(),
         };
         this.studentgraph.updateStudent(newStudent).subscribe({

@@ -12,7 +12,7 @@ export interface Student {
   age:string;
   lname: string;
   email: string;
-  courseId:string;
+  courseID:string;
   dob: Date;
 }
 

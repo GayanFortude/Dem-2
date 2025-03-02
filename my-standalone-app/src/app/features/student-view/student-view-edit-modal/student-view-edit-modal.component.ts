@@ -21,6 +21,7 @@ import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 export class StudentViewEditModalComponent {
   @Input() public isNew = false;
   @Input() public set model(student: Student) {
+    console.log(student.courseID)
     if (student !== undefined) {
       if (Object.keys(student).length !== 0) {
         this.active = true;
@@ -33,6 +34,7 @@ export class StudentViewEditModalComponent {
       this.editForm.reset({
         ...student,
         dob: this.dateDB,
+        courseId: student.courseID || null
       });
     }
   }
@@ -52,7 +54,7 @@ export class StudentViewEditModalComponent {
     email: new FormControl('',[Validators.required, Validators.email]),
     fname: new FormControl(),
     lname: new FormControl(),
-    courseId: new FormControl(),
+    courseID: new FormControl(),
     Discontinued: new FormControl(false),
   });
   
@@ -89,7 +91,7 @@ export class StudentViewEditModalComponent {
   }
   public onSave(e: Event): void {
     this.editForm.patchValue({dob:this.dateUI})
-    this.editForm.patchValue({courseId:this.course.id})
+    this.editForm.patchValue({courseID:this.course})
     e.preventDefault();
     this.save.emit(this.editForm.value);
     this.active = false;
