@@ -15,7 +15,7 @@ export class ProducerService implements OnModuleInit, OnApplicationShutdown {
   }
   private readonly kafka = new Kafka({
     clientId: 'kafkajs',
-    brokers: [process.env.KAFKA_BROKERS || 'localhost:29092'],
+    brokers: [process.env.KAFKA_BROKERS || 'localhost:9092'],
     retry: {
       initialRetryTime: 300, 
       retries: 10,           

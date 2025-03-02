@@ -25,7 +25,7 @@ export class ExcelProcessor {
   @Process('read-excel')
   async handleReadExcel(job: Job<{ object: any }>) {
     const { object } = job.data;
-
+    console.log("--- Reading Excel")
     if (!fs.existsSync(object.filePath)) {
       throw new BadRequestException('File not found');
     }
@@ -76,6 +76,7 @@ export class ExcelProcessor {
       for (const [index, element] of (data as any[]).entries()) {
         // Check all required fields at once
         const missingFields = requiredFields.filter((field) => !element[field]);
+        console.log("----Missing fields",missingFields)
         if (missingFields.length > 0) {
           throw new BadRequestException(
             `Missing required field(s) '${missingFields.join(', ')}' in row ${index + 1}`,
@@ -83,9 +84,11 @@ export class ExcelProcessor {
         }
 
         const student = await this.studentsService.bulkCreate(element); //create objects
+        console.log("----student ",student)
         if (student) {
           await queryRunner.manager.save(student);
           savedCount++;
+          console.log("----savedCount ",savedCount)
         }
       }
 

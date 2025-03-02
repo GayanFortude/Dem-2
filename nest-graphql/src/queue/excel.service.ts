@@ -15,6 +15,7 @@ export class ExcelService {
   ) {}
 
   async processExcel(object: any) { //upload queue
+    console.log("----File path:",object.filePath)
     await this.fileRepository.save({ path: object.filePath, status: false });
     await this.studentqueue.add(
       'read-excel',
