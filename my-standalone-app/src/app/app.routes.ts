@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { StudentViewComponent } from './features/student-view/student-view.component';
+import { CoursesComponent } from './features/courses/courses.component';
 
 
 export const routes: Routes = [
@@ -11,5 +12,9 @@ export const routes: Routes = [
     {
         path: "Home",
         component: StudentViewComponent
+    },
+    {
+        path: "course",
+        component: CoursesComponent
     },
 ];

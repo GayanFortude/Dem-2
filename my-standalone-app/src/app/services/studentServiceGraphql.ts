@@ -65,7 +65,7 @@ export class StudentServiceGraphql {
   }
 
 
-  createStudent(studentData: { fname: string; lname: string; email: string; dob: string }): Observable<any> { //post data
+  createStudent(studentData: { fname: string; lname: string; email: string;courseID:string, dob: string }): Observable<any> { //post data
     return this.apollo
       .mutate({
         mutation: CREATE_STUDENTS,

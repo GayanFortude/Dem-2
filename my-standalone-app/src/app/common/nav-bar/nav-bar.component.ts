@@ -37,5 +37,6 @@ export class NavBarComponent {
   
     public items: Array<CustomDrawerItem> = [
       { text: "Students", svgIcon: userIcon, selected: true , route:'/Home'},
+      { text: "Courses", svgIcon: userIcon, selected: true , route:'/course'},
     ];
 }

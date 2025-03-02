@@ -13,10 +13,24 @@ import { ExcelProcessor } from './queue/excel.processor';
 import { ExcelModule } from './queue/excel.module';
 import { HttpModule, HttpService } from '@nestjs/axios';
 import { SharedModule } from './common/sharedmodule';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloFederationDriver, ApolloFederationDriverConfig } from '@nestjs/apollo';
+import { Course } from './Students/dto/courseDto';
 //host.docker.internal
 @Module({
   imports: [StudentModule,KafkaModule,ExcelModule,
     TypeOrmModule.forFeature([Student]),
+    // GraphQLModule.forRoot<ApolloFederationDriverConfig>({
+    //   driver: ApolloFederationDriver,
+    //   autoSchemaFile: {
+    //     federation: 2,
+    //   },
+    //   playground:true,
+    //   introspection:true,
+    //   buildSchemaOptions: {
+    //     orphanedTypes: [Course],
+    //   },
+    // }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',

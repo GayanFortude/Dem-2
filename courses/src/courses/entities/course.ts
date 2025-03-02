@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { ObjectType, Field, ID, Directive } from '@nestjs/graphql';
-import { Student } from '../dto/studentDto';
+
 
 @ObjectType()
 @Entity()
@@ -13,12 +13,12 @@ export class Course {
   @Column()
   name: string;
 
-  @Field()
-  @Column()
-  studentId: string; 
+  // @Field()
+  // @Column()
+  // studentId: string; 
 
-  @Field(() => Student, { nullable: true })
-  student?: Student;
+  // @Field(() => Student, { nullable: true })
+  // student?: Student;
 
 }
 

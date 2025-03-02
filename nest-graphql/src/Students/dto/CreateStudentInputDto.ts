@@ -19,6 +19,11 @@ export class CreateStudentInputDto {
   email: string;
 
   @Field({ nullable: true })
+  @IsEmail({}, { message: 'Invalid courseID format' })
+  @IsDefined({ message: 'Course ID is required' })
+  courseID: string;
+
+  @Field({ nullable: true })
   @IsDateString({}, { message: 'Invalid date format. Expected YYYY-MM-DD' })
   @IsDefined({ message: 'Date is required' })
   dob: string;

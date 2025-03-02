@@ -24,6 +24,7 @@ export class StudentService {
     private readonly httpService: HttpService,
   ) {}
 
+
   async create(createStudentInput: CreateStudentInputDto): Promise<Student> {
     //save data
     try {
@@ -34,6 +35,9 @@ export class StudentService {
       throw new InternalServerErrorException(error);
     }
   }
+
+
+ 
 
   async createTopic(message: string, user: string, filePath: string, type: 'success' | 'error' = 'success') {
     try {
@@ -61,6 +65,11 @@ export class StudentService {
     }
   }
 
+
+  async forProject(id: string) {
+    return await this.studentRepository.find({ where: { courseID: id } })
+}
+
   async bulkCreate(element: any): Promise<Student> {
     const student = this.studentRepository.create({
       //create objects
@@ -72,6 +81,7 @@ export class StudentService {
           86400 *
           1000,
       ),
+      courseID:''
     });
     return student;
   }
@@ -93,6 +103,10 @@ export class StudentService {
     return age;
   }
 
+  async getAll(){
+    return  await this.studentRepository.find();
+  }
+
   async findAll(limit: number, offset: number) {
     //find all
     const studentcount = await this.studentRepository.findAndCount(); //Count rows
@@ -108,6 +122,7 @@ export class StudentService {
       lname: d.lname,
       email: d.email,
       dob: d.dob,
+      courseID:d.courseID,
       age: this.calculateAge(d.dob),
     }));
 
@@ -192,6 +207,17 @@ export class StudentService {
     }
     return student;
   }
+
+  
+  async findById(id: string): Promise<Student> {
+    const student = await this.studentRepository.findOneBy({ id });
+    if (!student) {
+      throw new NotFoundException(`Student with ID ${id} not found`);
+    }
+    return student;
+  }
+
+
 
   // async getCoursesByStudentId(studentId: string) {
   //   try {

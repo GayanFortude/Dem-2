@@ -5,6 +5,4 @@ export class CreateCourseInput {
   @Field()
   name: string;
 
-  @Field()
-  studentId: string;
 }

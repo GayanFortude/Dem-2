@@ -39,6 +39,25 @@
     </kendo-formfield>
   </form>
 
+  <kendo-formfield>
+    <kendo-label [for]="courseID" text="Course" labelCssClass="k-form-label"></kendo-label>
+    <kendo-dropdownlist
+      #courseID
+      [data]="courses"
+      formControlName="courseId"
+      textField="name"
+      valueField="id"
+      (valueChange)="onChangeCourse($event)"
+      [defaultItem]="{ id: 'Select a course' }"
+      required
+    >
+    </kendo-dropdownlist>
+    <!-- <kendo-formhint>Select a course</kendo-formhint>
+    <kendo-formerror *ngIf="editForm.get('courseId')?.hasError('required')">
+      Error: Email is required
+    </kendo-formerror> -->
+  </kendo-formfield>
+
   <kendo-dialog-actions layout="start">
     <button kendoButton themeColor="primary" [svgIcon]="saveIcon" [disabled]="!editForm.valid" (click)="onSave($event)">
       Save

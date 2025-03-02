@@ -3,9 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import * as crypto from 'crypto';
-import { Course } from './courses/entities/course';
-import { CourseModule } from './courses/course.module';
 
+import { CourseModule } from './courses/course.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig, ApolloFederationDriver, ApolloFederationDriverConfigFactory } from '@nestjs/apollo';
+import { join } from 'path';
+import { Course } from './courses/type/courseType';
+import {Course as CourseEntity } from './courses/entities/course';
 const encryptedSecrets = {
   username: "20162041fe346d0d09b5a5d9e50d3daf",
   password: "8e9727d4411788f0c2b363d8e0b436d3",
@@ -27,6 +31,15 @@ function decrypt(encrypted: string): string {
 @Module({
   imports: [
     CourseModule,
+    // GraphQLModule.forRoot<ApolloDriverConfig>({
+    //   driver: ApolloDriver,
+    //   autoSchemaFile: join(process.cwd(), 'src/graphql-schema.gql'),
+    //   // Federation-specific settings
+    //   buildSchemaOptions: {
+    //     // Enable Federation 2 features
+    //     orphanedTypes: [], // Add types if needed
+    //   },
+    // }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -34,7 +47,7 @@ function decrypt(encrypted: string): string {
       username: decrypt(encryptedSecrets.username),
       password: decrypt(encryptedSecrets.password),
       database: decrypt(encryptedSecrets.database),
-      entities: [Course],
+      entities: [CourseEntity],
       synchronize: true,
     }),
   ],

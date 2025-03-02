@@ -9,9 +9,11 @@ import { CommonModule } from '@angular/common';
 import { HttpClientJsonpModule } from '@angular/common/http';
 import { DateInputsModule, KENDO_DATEINPUTS } from '@progress/kendo-angular-dateinputs';
 import { ButtonsModule } from '@progress/kendo-angular-buttons';
+import { CourseServiceGraphql } from '../../../services/courseServiceGraphql';
+import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 @Component({
   selector: 'app-student-view-edit-modal',
-  imports: [ReactiveFormsModule, InputsModule, DialogModule,DateInputsModule, LabelModule,FormFieldModule, ButtonsModule,CommonModule,HttpClientJsonpModule,KENDO_DATEINPUTS],
+  imports: [ReactiveFormsModule, InputsModule, DialogModule,DateInputsModule, LabelModule,FormFieldModule, ButtonsModule,CommonModule,HttpClientJsonpModule,KENDO_DATEINPUTS,DropDownsModule],
   templateUrl: './student-view-edit-modal.component.html',
   styleUrl: './student-view-edit-modal.component.css'
 })
@@ -19,20 +21,18 @@ import { ButtonsModule } from '@progress/kendo-angular-buttons';
 export class StudentViewEditModalComponent {
   @Input() public isNew = false;
   @Input() public set model(student: Student) {
-    
-    if(student!=undefined){
-      if(Object.keys(student).length !== 0){
+    if (student !== undefined) {
+      if (Object.keys(student).length !== 0) {
         this.active = true;
       }
-      if(student.dob!=null){
-        this.dateDB=new Date(student.dob)
-      }
-      else{
-        this.dateDB=student.dob
+      if (student.dob != null) {
+        this.dateDB = new Date(student.dob);
+      } else {
+        this.dateDB = student.dob;
       }
       this.editForm.reset({
         ...student,
-        dob:this.dateDB
+        dob: this.dateDB,
       });
     }
   }
@@ -42,6 +42,7 @@ export class StudentViewEditModalComponent {
 
   public dateDB: Date = new Date(); 
   public dateUI: Date = new Date(); 
+  public course:any;
   public saveIcon: SVGIcon = saveIcon;
   public cancelIcon: SVGIcon = cancelIcon;
   public active = false;
@@ -51,9 +52,24 @@ export class StudentViewEditModalComponent {
     email: new FormControl('',[Validators.required, Validators.email]),
     fname: new FormControl(),
     lname: new FormControl(),
+    courseId: new FormControl(),
     Discontinued: new FormControl(false),
   });
-  constructor(){
+  
+  constructor(private courseService: CourseServiceGraphql){
+  }
+
+  ngOnInit(): void {
+    this.loadCourses(); // Fetch courses when component initializes
+  }
+  public courses: { id: string }[] = [];
+  async loadCourses(): Promise<void> {
+    try {
+      this.courses = await this.courseService.getAllCourses();
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+      this.courses = [];
+    }
   }
 
   pastDateValidator(control: AbstractControl): ValidationErrors | null { //Date validator
@@ -66,8 +82,14 @@ export class StudentViewEditModalComponent {
   public onChange(value: Date): void {
     this.dateUI=value //Catch date change
   }
+
+  public onChangeCourse(value: Date): void {
+    this.course=value
+   console.log(value)
+  }
   public onSave(e: Event): void {
     this.editForm.patchValue({dob:this.dateUI})
+    this.editForm.patchValue({courseId:this.course.id})
     e.preventDefault();
     this.save.emit(this.editForm.value);
     this.active = false;

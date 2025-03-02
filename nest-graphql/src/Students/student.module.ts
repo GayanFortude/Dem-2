@@ -12,6 +12,8 @@ import { ExcelModule } from 'src/queue/excel.module';
 import { BullModule } from '@nestjs/bull';
 import { SharedModule } from 'src/common/sharedmodule';
 import { HttpModule } from '@nestjs/axios';
+import { Course } from './dto/courseDto';
+import { CourseResolver } from './course.resolver';
 
 
 @Module({
@@ -25,10 +27,13 @@ import { HttpModule } from '@nestjs/axios';
       federation: 2,
     },
     playground:true,
-    introspection:true
+    introspection:true,
+    buildSchemaOptions: {
+      orphanedTypes: [Course],
+    },
   }),
 ],
   controllers:[],
-  providers: [StudentResolver, GraphqlResponseInterceptor],
+  providers: [StudentResolver, GraphqlResponseInterceptor,CourseResolver],
 })
 export class StudentModule {}

@@ -20,6 +20,7 @@ import { Student } from './entities/student.entity';
 import { StudentResponse } from './objects/studentResponse';
 import { StudentService } from './student.service';
 import { ExcelService } from 'src/queue/excel.service';
+import { Course } from './dto/courseDto';
 
 @Resolver(() => Student)
 export class StudentResolver {
@@ -35,7 +36,19 @@ export class StudentResolver {
   ): Promise<StudentResponse> {
     const response = await this.studentsService.findAll(limit, offset);
     console.log(response);
-    return response;
+    return response
+  }
+
+  // @Query(() => [Student])
+  // async students() {
+  //   return this.studentsService.getAll(); // Fetch all students from DB
+  // }
+
+
+  @Query(() => [Student], { name: 'getAllStudent' })
+  findAll() {
+    console.log("ddd")
+    return this.studentsService.getAll();
   }
 
   @Query(() => String, { name: 'downloadExcel' })
@@ -92,6 +105,12 @@ export class StudentResolver {
     }
   }
 
+  @ResolveField((of) => Course)
+  course(@Parent() student: Student) {
+    console.log("s1s",student)
+    return { __typename: 'course', id: student.courseID };
+  }
+
   // @ResolveField(() => [Course], { nullable: true })
   // async courses(@Parent() student: Student) {
   //   console.log(1)
@@ -104,11 +123,47 @@ export class StudentResolver {
   //   );
   // }
 
-  @ResolveReference()
-  async resolveReference(reference: {
-    __typename: string;
-    id: string;
-  }): Promise<Student> {
-    return this.studentsService.getStudent(reference.id);
-  }
+  // @ResolveReference()
+  // async resolveReference(reference: {
+  //   __typename: string;
+  //   id: string;
+  // }): Promise<Student> {
+  //   return this.studentsService.getStudent(reference.id);
+  // }
+
+  // @ResolveReference()
+  // async resolveReference(reference: { __typename: string; id: string }): Promise<Student> {
+  //   return this.studentsService.findById(reference.id);
+  // }
+
+  // @ResolveField((of) => CourseType)
+  // user(@Parent() course: CourseType): any {
+  //   return { __typename: 'CourseType', id: course.id };
+  // }
+
+  // @ResolveField('course', () => CourseType, { nullable: true })
+  // async course(@Parent() student: Student) {
+  //   return { __typename: 'CourseType', id: student.courseID };
+  // }
+
+  // @ResolveField(() => [CourseType], { nullable: true })
+  // async courses(@Parent() student: Student) {
+  //  // return this.coursesService.getCoursesByStudentId(student.id); 
+  // }
+
+  // private students = [
+  //   { id: '1', fname: 'John', lname: 'Doe', email: 'john@example.com', courseId: '101' },
+  //   { id: '2', fname: 'Jane', lname: 'Smith', email: 'jane@example.com', courseId: '102' },
+  // ];
+
+  // @Query(() => [Student])
+  // async students() {
+  //   return this.students;
+  // }
+
+  // @ResolveReference()
+  // resolveReference(reference: { id: string }) {
+  //   return this.studentsService.getAll(student => student.id === reference.id);
+  // }
+
 }

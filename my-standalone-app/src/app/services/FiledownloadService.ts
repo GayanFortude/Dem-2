@@ -14,7 +14,6 @@ export class FileDownloadService { //File download
       const url = `${environment.fileUploadendpoint}/download?filePath=${filePath}`;
 
       const headers = new HttpHeaders({});
-
       const response = await this.http
         .get(url, { headers, responseType: 'blob' })
         .toPromise();

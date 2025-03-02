@@ -1,5 +1,6 @@
-import { ObjectType, Field,ID, Directive } from '@nestjs/graphql';
+import { ObjectType, Field,ID, Directive, Int } from '@nestjs/graphql';
 import { Column, Entity,  PrimaryGeneratedColumn } from 'typeorm';
+import { Course } from '../dto/courseDto';
 
 @Entity()
 @ObjectType()
@@ -22,6 +23,11 @@ export class Student {
   dob: Date;
   @Field()
   age:number;
+  @Column()
+  @Field()
+  courseID: string;
+  @Field(() => Course, { nullable: true })
+  course?: Course;
 
 }
 

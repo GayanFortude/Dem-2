@@ -12,7 +12,14 @@ export interface Student {
   age:string;
   lname: string;
   email: string;
+  courseId:string;
   dob: Date;
+}
+
+
+export interface Course {
+  id: string;
+  name: string;
 }
 
 

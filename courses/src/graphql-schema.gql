@@ -1,0 +1,29 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Student {
+  id: ID!
+  fname: String!
+  courseId: String!
+}
+
+type Course {
+  id: ID!
+  name: String!
+  students: [Student!]
+}
+
+type Query {
+  getCourses: [Course!]!
+  course(id: String!): Course
+}
+
+type Mutation {
+  createCourse(input: CreateCourseInput!): Course!
+}
+
+input CreateCourseInput {
+  name: String!
+  studentId: String!
+}

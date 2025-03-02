@@ -13,7 +13,7 @@ import { SocketModule } from './shocket/socket.module';
     SocketModule,
     BullModule.forRoot({
       redis: {
-        host: 'localhost',
+        host: 'redis',
         port: 6379,
       },
     }),

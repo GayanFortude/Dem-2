@@ -8,7 +8,7 @@ import {
   KENDO_GRID,
   RemoveEvent,
 } from '@progress/kendo-angular-grid';
-import { Student } from '../../types/types';
+import { Course } from '../../types/types';
 import { Apollo } from 'apollo-angular';
 import { CommonModule } from '@angular/common';
 import { LayoutModule } from '@progress/kendo-angular-layout';
@@ -21,7 +21,7 @@ import { DialogModule } from '@progress/kendo-angular-dialog';
 import { InputsModule } from '@progress/kendo-angular-inputs';
 import { LabelModule } from '@progress/kendo-angular-label';
 import { HttpClientJsonpModule } from '@angular/common/http';
-import { StudentViewEditModalComponent } from './student-view-edit-modal/student-view-edit-modal.component';
+
 import { UploadsModule } from '@progress/kendo-angular-upload';
 import { StudentServiceGraphql } from '../../services/studentServiceGraphql';
 import { WebSocketService } from '../../services/webShocket.service';
@@ -30,46 +30,49 @@ import { environment } from '../../environment';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { FileDownloadService } from '../../services/FiledownloadService';
 import { redoIcon, userIcon, downloadIcon } from '@progress/kendo-svg-icons';
-import { FiledownloadComponent } from './filedownload/filedownload.component';
+import { ManageCoursesComponent } from './manage-courses/manage-courses.component';
 import { CourseServiceGraphql } from '../../services/courseServiceGraphql';
+import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
+
 
 @Component({
-  selector: 'app-student-view',
+  selector: 'app-courses',
   imports: [
-    FormsModule,
-    ExcelExportModule,
-    KENDO_GRID,
-    GridModule,
-    CommonModule,
-    DialogModule,
-    InputsModule,
-    LabelModule,
-    LayoutModule,
-    ButtonsModule,
-    StudentViewEditModalComponent,
-    FiledownloadComponent,
-    HttpClientJsonpModule,
-    UploadsModule,
-    SocketIoModule,
+        FormsModule,
+        ExcelExportModule,
+        KENDO_GRID,
+        GridModule,
+        CommonModule,
+        DialogModule,
+        InputsModule,
+        LabelModule,
+        LayoutModule,
+        ButtonsModule,
+        ManageCoursesComponent,
+        // StudentViewEditModalComponent,
+        // FiledownloadComponent,
+        HttpClientJsonpModule,
+        UploadsModule,
+        SocketIoModule,
   ],
-  templateUrl: './student-view.component.html',
-  providers: [StudentServiceGraphql,CourseServiceGraphql],
-  styleUrl: './student-view.component.css',
+  providers: [CourseServiceGraphql],
+  templateUrl: './courses.component.html',
+  styleUrl: './courses.component.css'
 })
-export class StudentViewComponent {
+export class CoursesComponent {
   @ViewChild('grid') grid: any;
   constructor(
-    private studentgraph: StudentServiceGraphql,
-    private wsService: WebSocketService,
+     private coursegraph: CourseServiceGraphql,
+    // private wsService: WebSocketService,
     private notificationService: NotificationService,
     private fileDownloadService: FileDownloadService
   ) {}
 
-  public data: Observable<Student[]> = new Observable<Student[]>();
+  public data: Observable<any[]> = new Observable<Course[]>();
 
   public loading: boolean = false;
   private pageSize = 10;
-  fileuploadEndpoint = `${environment.fileUploadendpoint}/upload`;
+
   public view: Observable<GridDataResult> | undefined;
   public gridState: State = {
     sort: [],
@@ -84,17 +87,17 @@ export class StudentViewComponent {
   ngOnInit() {
     this.loadMore();
 
-    this.wsService.listen().subscribe((d) => {
+    // this.wsService.listen().subscribe((d) => {
 
-      const parsedData = JSON.parse(d);
-      const { event, data } = parsedData;
-      const { message, filePath, userId, type, timestamp } = data;
+    //   const parsedData = JSON.parse(d);
+    //   const { event, data } = parsedData;
+    //   const { message, filePath, userId, type, timestamp } = data;
 
-      this.handleNotification('message', message, type);
-      if (filePath != null) {
-        this.fileDownloadService.downloadFile(filePath);
-      }
-    });
+    //   this.handleNotification('message', message, type);
+    //   if (filePath != null) {
+    //     this.fileDownloadService.downloadFile(filePath);
+    //   }
+    // });
   }
 
   private handleNotification(
@@ -116,7 +119,7 @@ export class StudentViewComponent {
   }
 
   ngOnDestroy() {
-     this.wsService.disconnect();
+    //  this.wsService.disconnect();
   }
 
   async onUpload(event: any): Promise<any> {
@@ -124,56 +127,25 @@ export class StudentViewComponent {
       return;
     }
 
-    const file = event.files[0].rawFile;
-    const formData = new FormData();
-    formData.append('file', file);
-    document.cookie = 'token=user1; path=/;';
-    try {
-      const response = await fetch(this.fileuploadEndpoint, {
-        method: 'POST',
-        credentials: 'include',
-        body: formData,
-      });
-
-      console.log(response);
-
-      if (response.ok) {
-        const result = await response.json();
-        this.handleNotification(
-          'message',
-          `File saved successfully`,
-          'success'
-        );
-      } else {
-        const errorText = await response.text();
-        this.handleNotification(
-          'message',
-          `n error occurred during file upload`,
-          'error'
-        );
-      }
-    } catch (error) {
-      this.handleNotification(
-        'message',
-        `n error occurred during file upload ${error}`,
-        'error'
-      );
-    }
-    event.preventDefault();
+    
   }
 
+
   public loadMore(reset: boolean = false): void {
+    console.log(reset)
     //Loading data to grid
     this.loading = true;
     if (reset) {
-      console.log("ddd")
-      this.data = new Observable<Student[]>();
-      this.studentgraph.resetPagination();
-      this.data = this.studentgraph.object;
+      this.data = new Observable<Course[]>();
+      console.log( this.data)
+       this.coursegraph.resetPagination();
+       this.data = this.coursegraph.object;
     } else {
-      this.data = this.studentgraph.object;
+       this.data = this.coursegraph.object;
+       console.log(this.data)
     }
-    this.studentgraph.loadMore(this.pageSize, reset).subscribe((d) => {
+    this.coursegraph.loadMore(this.pageSize, reset).subscribe((d) => {
+      console.log(d)
       this.loading = false;
     });
   }
@@ -185,10 +157,7 @@ export class StudentViewComponent {
     //assign new object
     this.editDataItem = {
       id: null,
-      fname: null,
-      lname: null,
-      email: '',
-      dob: null,
+      name: null,
     };
     this.isNew = true;
   }
@@ -201,48 +170,49 @@ export class StudentViewComponent {
 
   onAdd(): void {
     //add
-    this.editDataItem = { dob: null, email: '', fname: null, lname: null };
+    this.editDataItem = {  name: null};
     this.isNew = true;
   }
 
   public removeHandler(args: RemoveEvent): void {
-    this.studentgraph.deleteStudent(args.dataItem.id).subscribe({
-      next: (response) => {
-        if (response) {
-          this.handleNotification(
-            'message',
-            `Data deleted successfully`,
-            'success'
-          );
-          this.loadMore(true);
-        }
-      },
-      error: (err) => {
-        this.handleNotification('message', `Error creating user`, 'error');
-      },
-    });
+    // this.studentgraph.deleteStudent(args.dataItem.id).subscribe({
+    //   next: (response) => {
+    //     if (response) {
+    //       this.handleNotification(
+    //         'message',
+    //         `Data deleted successfully`,
+    //         'success'
+    //       );
+    //       // this.loadMore(true);
+    //     }
+    //   },
+    //   error: (err) => {
+    //     this.handleNotification('message', `Error creating user`, 'error');
+    //   },
+    // });
   }
 
   public async saveFileHandler(data: any) {
  
     try {
-      this.studentgraph
-        .downloadStudent(parseInt(data.age), 'token=user1')
-        .subscribe({
-          next: (response) => {
-            if (response) {
-              this.handleNotification('message', `Data Processing`, 'success');
-              // this.loadMore(true);
-            }
-          },
-          error: (err) => {
-            this.handleNotification(
-              'message',
-              `Error downloading user`,
-              'error'
-            );
-          },
-        });
+     
+      // this.studentgraph
+      //   .downloadStudent(parseInt(data.age), 'token=user1')
+      //   .subscribe({
+      //     next: (response) => {
+      //       if (response) {
+      //         this.handleNotification('message', `Data Processing`, 'success');
+      //         // this.loadMore(true);
+      //       }
+      //     },
+      //     error: (err) => {
+      //       this.handleNotification(
+      //         'message',
+      //         `Error downloading user`,
+      //         'error'
+      //       );
+      //     },
+      //   });
     } catch (error) {
       this.handleNotification(
         'excel-error',
@@ -253,27 +223,21 @@ export class StudentViewComponent {
     this.isNewFile = false;
   }
 
-  public saveHandler(student: Student): void {
-    if (student !== null) {
+  public saveHandler(course: Course): void {
+    if (course !== null) {
       if (this.isNew == true) {
         //save user
-        const formattedDate = this.formatDate(student.dob);
-        const newStudent = {
-          fname: student.fname,
-          lname: student.lname,
-          email: student.email,
-          courseID:"",
-          dob: formattedDate.toString(),
+        const newCourse = {
+          name: course.name,
         };
-        this.studentgraph.createStudent(newStudent).subscribe({
+        this.coursegraph.createCourse(newCourse).subscribe({
           next: (response) => {
             this.handleNotification(
               'message',
               `Data saved successfully`,
               'success'
             );
-            this.data = new Observable<Student[]>();
-            this.loadMore(true);
+             this.loadMore(true);
           },
           error: (err) => {
             this.handleNotification(
@@ -286,27 +250,20 @@ export class StudentViewComponent {
         this.editDataItem = undefined;
       } else {
         //update user
-        console.log(student)
-        const formattedDate = this.formatDate(student.dob);
-        const newStudent = {
-          id: student.id,
-          fname: student.fname,
-          lname: student.lname,
-          email: student.email,
-          courseID:student.courseId,
-          dob: formattedDate.toString(),
+     
+        const newCourse = {
+          id: course.id,
+          name: course.name
         };
-        this.studentgraph.updateStudent(newStudent).subscribe({
+        this.coursegraph.updateCourse(newCourse).subscribe({
           next: async (response) => {
+            this.loadMore(true);
             this.handleNotification(
               'message',
               `Data saved successfully`,
               'success'
             );
-            console.log("ddd")
-            this.data = new Observable<Student[]>();
-            this.studentgraph.resetPagination();
-            this.loadMore(true);
+            // this.loadMore(true);
           },
           error: (err) => {
             this.handleNotification(
