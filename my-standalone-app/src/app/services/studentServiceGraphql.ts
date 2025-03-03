@@ -35,14 +35,11 @@ export class StudentServiceGraphql {
       return from([true]);
     }
     take = 10;
-    // if (reset) {
-    //   console.log(this.data)
-    //   this.skip = 0;
-    //   this.data = []; // Clear old data
-    //   console.log(this.data)
-    //   this.observable.next(this.data);
-    //   this.object = this.observable.asObservable();
-    // }
+    if (reset) {
+      console.log(this.data)
+      this.skip = 0;
+      this.data = []; 
+    }
    
 
     return this.apollo
@@ -53,17 +50,18 @@ export class StudentServiceGraphql {
       })
       .valueChanges.pipe(
         map((result) => result.data?.getStudent?.student),
-        tap((values) => {
+        tap(async(values) => {
           if (values.length === 0) {
             this.completed = true;
           } else {
             if (reset) {
               this.resetPagination()
             }
+            console.log(values)
             this.data = [...this.data, ...values]; 
             this.observable.next(this.data);
             this.skip += values.length;
-    
+            console.log(this.data)
           }
         }),
         map((values) => values.length > 0)

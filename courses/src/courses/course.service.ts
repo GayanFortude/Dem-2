@@ -24,13 +24,11 @@ export class CourseService {
         take: limit,
       }
     );
-    console.log("sss",courses)
     return courses;
   }
 
   async getAllCourses(): Promise<Course[]> {
     const courses = await this.courseRepository.find();
-    console.log("sss",courses)
     return courses;
   }
 
@@ -63,18 +61,6 @@ export class CourseService {
     return this.courseRepository.find()
   }
 
-  async getStudentsByCourseId(courseId: string): Promise<any[]> {
-    // This could call the student service via REST/gRPC or return references
-    // For Federation, return references to let the gateway resolve them
-    const studentIds = await this.fetchStudentIdsByCourseId(courseId); // Hypothetical method
-    return studentIds.map(id => ({ __typename: 'StudentType', id }));
-  }
-
-  private async fetchStudentIdsByCourseId(courseId: string): Promise<string[]> {
-    // Replace with real logic: DB query, HTTP call to student service, etc.
-    // Example: SELECT id FROM students WHERE courseID = courseId
-    return ['student1', 'student2']; // Mock data
-  }
 
   async findById(id: string): Promise<Course> {
     const course = await this.courseRepository.findOne({ where: { id } });
@@ -85,13 +71,6 @@ export class CourseService {
     return course;
   }
 
-// async getCoursesByStudentId(studentId: string): Promise<Course[]> {
-//     return this.courseRepository.find({ where: { studentId } });
-//   }
-
-  // findAllByAuthorId(authorId: string): Student[] {
-  //   return []
-  // }
 
   async getCourseId(id: string): Promise<Course> {
     const course = await this.courseRepository.findOne({ where: { id: id } });

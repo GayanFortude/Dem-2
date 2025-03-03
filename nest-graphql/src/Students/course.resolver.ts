@@ -14,7 +14,6 @@ export class CourseResolver {
 
   @ResolveField((of) => [Student])
   student(@Parent() course: Course): Promise<Student[]> {
-    console.log("dd111111d")
       return this.studentsService.forProject(course.id);
   }
 

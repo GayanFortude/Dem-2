@@ -38,13 +38,6 @@ export class CourseResolver {
     return this.courseService.getCourseId(id); // Assuming this exists in your service
   }
 
-  // @Query(() => [Course])
-  // async coursesByStudentId(
-  //   @Args('studentId', { type: () => String }) studentId: string,
-  // ): Promise<Course[]> {
-  //   return this.courseService.getCoursesByStudentId(studentId);
-  // }
-
 
   @Mutation(() => Course)
   async createCourse(@Args('input') input: CreateCourseInput) {
@@ -69,23 +62,12 @@ export class CourseResolver {
     }
   }
 
-  // @ResolveReference()
-  // async resolveReference(reference: { __typename: string; id: string }): Promise<CourseType> {
-  //   return this.courseService.findById(reference.id);
-  // }
-
+ 
   @ResolveReference()
   resolvereferance(ref: { __typename: string, id: string }) {
     console.log("ss",ref.id)
     return this.courseService.findById(ref.id);
   }
-
-
-  // @ResolveField('students', () => [Student], { nullable: true })
-  // async students(@Parent() course: CourseType) {
-  //   // Fetch students with this course ID from the student service
-  //   return this.courseService.getStudentsByCourseId(course.id);
-  // }
 
 
 }
