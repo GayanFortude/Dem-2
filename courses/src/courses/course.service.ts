@@ -1,12 +1,11 @@
 import {
-  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
-import { Course,  } from './entities/course';
+import {  Repository } from 'typeorm';
+import { Course } from './entities/course';
 import { CreateCourseInput } from './dto/createCourseDto';
 import { UpdateCourseInput } from './dto/updateCourseInput';
 
@@ -18,12 +17,10 @@ export class CourseService {
   ) {}
 
   async getCourses(limit: number, offset: number): Promise<Course[]> {
-    const courses = await this.courseRepository.find(
-      {
-        skip: offset,
-        take: limit,
-      }
-    );
+    const courses = await this.courseRepository.find({
+      skip: offset,
+      take: limit,
+    });
     return courses;
   }
 
@@ -32,7 +29,8 @@ export class CourseService {
     return courses;
   }
 
-  async update( //update
+  async update(
+    //update
     id: string,
     updateCourseInput: UpdateCourseInput,
   ): Promise<Course | null> {
@@ -47,36 +45,47 @@ export class CourseService {
       throw new InternalServerErrorException(error);
     }
   }
-  
 
   async create(createCourseInput: CreateCourseInput): Promise<Course> {
-    const course = this.courseRepository.create({
-      name: createCourseInput.name,
-      // studentId: createCourseInput.studentId,
-    });
-    return this.courseRepository.save(course);
+    try {
+      const course = this.courseRepository.create({
+        name: createCourseInput.name,
+      });
+      return this.courseRepository.save(course);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  async find(p0: (course: any) => boolean){
-    return this.courseRepository.find()
+  async find(p0: (course: any) => boolean) {
+    try {
+      return this.courseRepository.find();
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
-
 
   async findById(id: string): Promise<Course> {
-    const course = await this.courseRepository.findOne({ where: { id } });
-    // console.log(course)
-    if (!course) {
-      throw new NotFoundException(`Course with ID ${id} not found`);
+    try {
+      const course = await this.courseRepository.findOne({ where: { id } });
+      if (!course) {
+        throw new NotFoundException(`Course with ID ${id} not found`);
+      }
+      return course;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
     }
-    return course;
   }
 
-
   async getCourseId(id: string): Promise<Course> {
-    const course = await this.courseRepository.findOne({ where: { id: id } });
-    if (!course) {
-      throw new NotFoundException(`Course with ID ${id} not found`);
+    try {
+      const course = await this.courseRepository.findOne({ where: { id: id } });
+      if (!course) {
+        throw new NotFoundException(`Course with ID ${id} not found`);
+      }
+      return course;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
     }
-    return course;
   }
 }

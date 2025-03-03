@@ -1,9 +1,9 @@
-import { Injectable, ViewChild } from "@angular/core";
-import { Apollo, gql } from "apollo-angular";
+import { Injectable} from "@angular/core";
+import { Apollo } from "apollo-angular";
 import { Observable, BehaviorSubject, from } from "rxjs";
 import { map, tap } from "rxjs/operators";
 import { CREATE_STUDENTS, DELETE_STUDENT, DOWNLOAD_STUDENTS, GET_STUDENTS, UPDATE_STUDENTS } from "../core/graphql.operations";
-import { GetStudentResponse, Student } from "../types/types";
+import { GetStudentResponse } from "../types/types";
 
 
 @Injectable()
@@ -36,7 +36,7 @@ export class StudentServiceGraphql {
     }
     take = 10;
     if (reset) {
-      console.log(this.data)
+      
       this.skip = 0;
       this.data = []; 
     }
@@ -55,13 +55,18 @@ export class StudentServiceGraphql {
             this.completed = true;
           } else {
             if (reset) {
-              this.resetPagination()
+              this.skip = 0;  
+              this.completed = false; 
+              this.data = []; 
+              this.data = [...this.data, ...values]; 
+              this.observable.next(this.data);
+              this.skip += values.length;
             }
-            console.log(values)
-            this.data = [...this.data, ...values]; 
-            this.observable.next(this.data);
-            this.skip += values.length;
-            console.log(this.data)
+            else{
+              this.data = [...this.data, ...values]; 
+              this.observable.next(this.data);
+              this.skip += values.length;
+            }
           }
         }),
         map((values) => values.length > 0)

@@ -2,19 +2,17 @@ import { Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   AddEvent,
-  FilterableSettings,
   GridDataResult,
   GridModule,
   KENDO_GRID,
   RemoveEvent,
 } from '@progress/kendo-angular-grid';
 import { Student } from '../../types/types';
-import { Apollo } from 'apollo-angular';
 import { CommonModule } from '@angular/common';
 import { LayoutModule } from '@progress/kendo-angular-layout';
 import { ButtonsModule } from '@progress/kendo-angular-buttons';
 import { SVGIcon } from '@progress/kendo-svg-icons';
-import { CompositeFilterDescriptor, State } from '@progress/kendo-data-query';
+import {  State } from '@progress/kendo-data-query';
 import { ExcelExportModule } from '@progress/kendo-angular-excel-export';
 import { Observable } from 'rxjs';
 import { DialogModule } from '@progress/kendo-angular-dialog';
@@ -134,9 +132,6 @@ export class StudentViewComponent {
         credentials: 'include',
         body: formData,
       });
-
-      console.log(response);
-
       if (response.ok) {
         const result = await response.json();
         this.handleNotification(
@@ -162,13 +157,12 @@ export class StudentViewComponent {
     event.preventDefault();
   }
 
-  public loadMore(reset: boolean = false): void {
+  public async loadMore(reset: boolean = false): Promise<void> {
     //Loading data to grid
     this.loading = true;
     if (reset) {
-      console.log("ddd")
-      this.data = new Observable<Student[]>();
-      this.studentgraph.resetPagination();
+      this.data = await new Observable<Student[]>();
+      await this.studentgraph.resetPagination();
       this.data = this.studentgraph.object;
     } else {
       this.data = this.studentgraph.object;
@@ -274,6 +268,7 @@ export class StudentViewComponent {
             );
             this.data = new Observable<Student[]>();
             this.loadMore(true);
+            window.location.reload()
           },
           error: (err) => {
             this.handleNotification(
@@ -297,16 +292,16 @@ export class StudentViewComponent {
         };
         this.data = new Observable<Student[]>();
         // this.studentgraph.resetPagination();
-         this.loadMore(true);
+       
         this.studentgraph.updateStudent(newStudent).subscribe({
           next: async (response) => {
+            this.loadMore(true);
             this.handleNotification(
               'message',
               `Data saved successfully`,
               'success'
             );
-            console.log("ddd")
-  
+        
           },
           error: (err) => {
             this.handleNotification(
@@ -316,6 +311,7 @@ export class StudentViewComponent {
             );
           },
         });
+        window.location.reload()
         this.editDataItem = undefined;
       }
     }

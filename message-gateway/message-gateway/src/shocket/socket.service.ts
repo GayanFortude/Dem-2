@@ -39,14 +39,6 @@ export class SocketService implements OnModuleInit, OnModuleDestroy {
               timestamp: new Date().toISOString(),
             },
           };
-          console.log({
-            source: 'create-consumer',
-            message: message.value?.toString() ?? '',
-            key: message.key?.toString() ?? '',
-            partition: partition.toString(),
-            topic: topic.toString(),
-          });
-          const payload = message.value?.toString() ?? '';
           const token =
             message.key
               ?.toString()
@@ -54,9 +46,7 @@ export class SocketService implements OnModuleInit, OnModuleDestroy {
               ?.map((p) => p.trim())
               ?.find((p) => p.split('=')[0] === 'token')
               ?.split('=')[1] ?? '';
-          console.log(token);
           await this.sendMessageToUser(token, payloadSuccess);
-          // this.processExcel(message.value?.toString() ?? 'No message value');
         },
       },
     );
@@ -101,7 +91,6 @@ export class SocketService implements OnModuleInit, OnModuleDestroy {
 
   // Public method to send a message to a specific user
   async sendMessageToUser(userId: string, payload: any) {
-    console.log(userId, payload);
     await this.sendMessage(userId, JSON.stringify(payload), false);
   }
 

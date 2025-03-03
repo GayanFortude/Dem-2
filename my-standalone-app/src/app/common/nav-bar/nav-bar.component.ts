@@ -5,7 +5,7 @@ import { Router, RouterOutlet } from '@angular/router';
 import { ButtonsModule } from '@progress/kendo-angular-buttons';
 import { GridModule, KENDO_GRID } from '@progress/kendo-angular-grid';
 import { DrawerItem, DrawerSelectEvent, LayoutModule } from '@progress/kendo-angular-layout';
-import {  menuIcon, SVGIcon, userIcon } from '@progress/kendo-svg-icons';
+import {  menuIcon, SVGIcon, userIcon ,gridIcon} from '@progress/kendo-svg-icons';
 
 interface CustomDrawerItem extends DrawerItem {
   route?: string;
@@ -37,6 +37,6 @@ export class NavBarComponent {
   
     public items: Array<CustomDrawerItem> = [
       { text: "Students", svgIcon: userIcon, selected: true , route:'/Home'},
-      { text: "Courses", svgIcon: userIcon, selected: true , route:'/course'},
+      { text: "Courses", svgIcon:gridIcon , selected: true , route:'/course'},
     ];
 }

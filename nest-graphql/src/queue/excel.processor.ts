@@ -4,14 +4,12 @@ import * as xlsx from 'xlsx';
 import { Workbook } from 'exceljs';
 import {
   BadRequestException,
-  InternalServerErrorException,
 } from '@nestjs/common';
 import { environment } from 'src/common/environment';
 import { StudentService } from 'src/Students/student.service';
 import { DataSource, Repository } from 'typeorm';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { FileEntity } from 'src/Students/entities/file.entity';
 import { ExcelService } from './excel.service';
 
 @Processor('studentqueue')
@@ -34,7 +32,7 @@ export class ExcelProcessor {
       await this.readExcel(object.filePath, object.user);
       return { success: true };
     } catch (error) {
-      // Log the error and rethrow it to mark the job as failed
+    
       await this.studentsService.createTopic(
         `Error in handleReadExcel: ${error.message}`,
         object.user,
@@ -96,6 +94,7 @@ export class ExcelProcessor {
       await this.excelService.updateFileStatus(filePath);
       await this.studentsService.createTopic(
         `Processing complete. Total rows: ${excelRowCount}, Saved rows: ${savedCount}`,
+        '',
         user,
         'success',
       );

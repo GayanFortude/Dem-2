@@ -6,7 +6,7 @@
   (close)="closeForm()"
 >
   <kendo-dialog-titlebar>
-    {{ isNew ? "Add new User" : "Edit User" }}
+    {{ isNew ? "Add new Student" : "Edit Student" }}
   </kendo-dialog-titlebar>
 
   <form novalidate class="k-form k-form-md" [formGroup]="editForm">
@@ -74,7 +74,6 @@
         textField="name"
         (valueChange)="onChangeCourse($event)"
         valueField="id"
-        [defaultItem]="{ id: 'Select a course' }"
         formControlName="courseID"
         [valuePrimitive]="true"
         required

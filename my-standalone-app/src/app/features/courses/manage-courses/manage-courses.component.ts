@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { FormFieldModule, InputsModule } from '@progress/kendo-angular-inputs';
 import { DialogModule } from "@progress/kendo-angular-dialog";
 import { LabelModule } from "@progress/kendo-angular-label";
@@ -55,7 +55,6 @@ export class ManageCoursesComponent {
     try {
       this.courses = await this.courseService.getAllCourses();
     } catch (error) {
-      console.error('Error fetching courses:', error);
       this.courses = [];
     }
   }

@@ -1,18 +1,15 @@
 import {
-  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateStudentInputDto } from './dto/CreateStudentInputDto';
 import { UpdateStudentInput } from './dto/updateStudentInput';
 import { Student } from './entities/student.entity';
 import { ProducerService } from 'src/kafka/poducer/producer.service';
 import { environment } from 'src/common/environment';
-import { firstValueFrom } from 'rxjs';
-import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class StudentService {
@@ -20,8 +17,6 @@ export class StudentService {
     @InjectRepository(Student)
     private readonly studentRepository: Repository<Student>,
     private readonly _kafka: ProducerService,
-    private readonly dataSource: DataSource,
-    private readonly httpService: HttpService,
   ) {}
 
 
@@ -66,7 +61,7 @@ export class StudentService {
   }
 
 
-  async forProject(id: string) {
+  async forCourse(id: string) {
     return await this.studentRepository.find({ where: { courseID: id } })
 }
 
@@ -217,32 +212,6 @@ export class StudentService {
     return student;
   }
 
-
-
-  // async getCoursesByStudentId(studentId: string) {
-  //   try {
-  //     await this.getStudent(studentId);
-
-  //     // Query the courses-service GraphQL API
-  //     const query = `
-  //       query {
-  //         coursesByStudentId(studentId: "${studentId}") {
-  //           id
-  //           name
-  //         }
-  //       }
-  //     `;
-  //     const response = await firstValueFrom(
-  //       this.httpService.post('http://localhost:3004/graphql', { query }), //send request to federation gateway
-  //     );
-  //     const courses = response.data.data.coursesByStudentId || [];
-  //     return courses.map((course: { id: string ,name:string}) => ({ id: course.id,name:course.name }));
-
-  //   } catch (error) {
- 
-  //     return [];
-  //   }
-  // }
 
 
 }

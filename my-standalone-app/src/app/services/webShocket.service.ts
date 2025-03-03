@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { io, Socket } from 'socket.io-client';
 import { Observable, Subject } from 'rxjs';
 import { environment } from '../environment';
 
@@ -35,14 +34,10 @@ export class WebSocketService {
       this.socket.send(JSON.stringify(message));
     }
   }
-  getMessages(): Observable<any> {
-    return this.messages.asObservable();
-  }
 
   listen(): Observable<any> {
     return new Observable((observer) => {
       this.socket.onmessage = (event) => {
-        console.log(event.data)
         observer.next(event.data);
       };
       return () => {

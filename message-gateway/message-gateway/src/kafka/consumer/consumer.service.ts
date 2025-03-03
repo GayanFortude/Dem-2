@@ -21,7 +21,14 @@ export class ConsumerService implements OnApplicationShutdown {
   }
 
   private readonly kafka = new Kafka({
-    brokers: ['localhost:29092']
+    clientId: 'kafkajs',
+    brokers: [process.env.KAFKA_BROKERS || 'localhost:29092'],
+    retry: {
+      initialRetryTime: 300, 
+      retries: 10,           
+    },
+    connectionTimeout: 10000, 
+    requestTimeout: 25000,    
   });
 
   private readonly consumers: Consumer[] = [];

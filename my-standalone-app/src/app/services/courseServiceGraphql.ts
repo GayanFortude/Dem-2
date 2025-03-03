@@ -1,19 +1,14 @@
-import { Injectable, ViewChild } from '@angular/core';
-import { Apollo, gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
+import { Apollo } from 'apollo-angular';
 import { Observable, BehaviorSubject, from } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import {
   CREATE_COURSES,
-  CREATE_STUDENTS,
-  DELETE_STUDENT,
-  DOWNLOAD_STUDENTS,
   GET_ALL_COURSES,
   GET_COURSES,
-  GET_STUDENTS,
   UPDATE_COURSES,
-  UPDATE_STUDENTS,
 } from '../core/graphql.operations';
-import { GetStudentResponse, Student } from '../types/types';
+
 
 @Injectable()
 export class CourseServiceGraphql {
@@ -39,12 +34,10 @@ export class CourseServiceGraphql {
     if (this.completed) {
       return from([true]);
     }
-    console.log(take,reset)
+
     if (reset) {
-      // console.log(reset)
-      // this.skip = 0;
-      // this.data = [];
-      // this.observable.next(this.data);
+      this.skip = 0;
+      this.data = [];
     }
 
     this.loading = true; // Show loading spinner in grid
@@ -58,22 +51,26 @@ export class CourseServiceGraphql {
       .valueChanges.pipe(
         map((result) => result?.data?.getCourses || []),
         tap((values) => {
-          console.log(values,values.length)
+        
           if (values.length === 0 ) {
-            this.completed = true;console.log("values")
+            this.completed = true;
           } 
           else {
             if (reset) {
-              console.log(reset)
-              this.resetPagination()
+              this.skip = 0;  
+              this.completed = false; 
+              this.data = []; 
+              this.data = [...this.data, ...values];
+              this.observable.next(this.data);
+              this.skip += values.length;
             }
-            console.log(values)
-            this.data = [...this.data, ...values];
-            this.observable.next(this.data);
-            this.skip += values.length;
-            console.log(this.data)
+            else{
+              this.data = [...this.data, ...values];
+              this.observable.next(this.data);
+              this.skip += values.length;
+            }
           }
-          
+       
         }),
         map((values) => values.length > 0)
       );
@@ -93,10 +90,10 @@ export class CourseServiceGraphql {
   
 
   createCourse(courseData: { name: string }): Observable<any> {
-    console.log(courseData);
+
     return this.apollo
       .mutate({
-        mutation: CREATE_COURSES, // Note: Typo? Should be CREATE_COURSE?
+        mutation: CREATE_COURSES, 
         variables: { input: courseData },
       })
       .pipe(map((result: any) => result.data?.input));
@@ -114,21 +111,4 @@ export class CourseServiceGraphql {
       .pipe(map((result: any) => result.data?.UpdateCourseInput));
   }
 
-  // deleteStudent(id: string) {
-  //   return this.apollo
-  //     .mutate({
-  //       mutation: DELETE_STUDENT,
-  //       variables: { id: id },
-  //     })
-  //     .pipe(map((result: any) => result));
-  // }
-
-  // downloadStudent(age: number, token: string) {
-  //   return this.apollo
-  //     .mutate({
-  //       mutation: DOWNLOAD_STUDENTS,
-  //       variables: { age: age, token: token },
-  //     })
-  //     .pipe(map((result: any) => result));
-  // }
 }

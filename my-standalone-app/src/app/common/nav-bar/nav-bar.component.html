@@ -6,7 +6,7 @@
       fillMode="flat"
       (click)="drawer.toggle()"
     ></button>
-    <span class="mail-box">My Kendo</span>
+    <span class="mail-box">Student Management System</span>
   </div>
   <div>
     <kendo-drawer-container>
@@ -17,7 +17,7 @@
           [items]="items"
           mode="push"
           [mini]="true"
-          [expanded]="true"
+          [expanded]="false"
           (select)="onSelect($event)"
         >
         </kendo-drawer>

@@ -21,7 +21,7 @@ import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 export class StudentViewEditModalComponent {
   @Input() public isNew = false;
   @Input() public set model(student: Student) {
-    console.log(student.courseID)
+
     if (student !== undefined) {
       if (Object.keys(student).length !== 0) {
         this.active = true;
@@ -37,6 +37,7 @@ export class StudentViewEditModalComponent {
         courseId: student.courseID || null
       });
     }
+    this.dateUI=this.dateDB
   }
   @Output() cancel: EventEmitter<undefined> = new EventEmitter();
   @Output() save: EventEmitter<Student> = new EventEmitter();
@@ -69,7 +70,7 @@ export class StudentViewEditModalComponent {
     try {
       this.courses = await this.courseService.getAllCourses();
     } catch (error) {
-      console.error('Error fetching courses:', error);
+     
       this.courses = [];
     }
   }
@@ -87,7 +88,6 @@ export class StudentViewEditModalComponent {
 
   public onChangeCourse(value: Date): void {
     this.course=value
-   console.log(value)
   }
   public onSave(e: Event): void {
     this.editForm.patchValue({dob:this.dateUI})

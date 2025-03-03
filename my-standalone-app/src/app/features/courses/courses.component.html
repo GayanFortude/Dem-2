@@ -1,21 +1,6 @@
 <div class="content-new">
     <div class="content-2">
       <diV class="card-list">
-        <!-- <kendo-card width="360px">
-          <kendo-card-header class="k-hstack">
-            <div>
-              <h1 kendoCardTitle>File handling</h1>
-            </div>
-          </kendo-card-header>
-          <kendo-card-body class="card-body">
-            <kendo-upload
-              [multiple]="false"
-              (upload)="onUpload($event)"
-              [autoUpload]="false"
-            >
-            </kendo-upload>
-          </kendo-card-body>
-        </kendo-card> -->
         <kendo-card width="360px">
           <kendo-card-header class="k-hstack">
             <div>
@@ -50,13 +35,6 @@
           (edit)="editHandler($event)"
           (add)="addHandler()"
         >
-
-        <!-- (scrollBottom)="loadMore(false)"
-        (edit)="editHandler($event)"
-        (remove)="removeHandler($event)"
-        (add)="addHandler()" -->
-        
-          <!-- <kendo-grid-column field="id" [width]="80" title="ID"></kendo-grid-column> -->
           <kendo-grid-column
             field="name"
             title="Course Name"
@@ -79,13 +57,6 @@
           (cancel)="cancelHandler()"
         >
         </app-manage-courses>
-         <!-- 
-        <app-filedownload
-          [isNew]="isNewFile"
-          (save)="saveFileHandler($event)"
-          (cancel)="cancelFileHandler()"
-        >
-        </app-filedownload> -->
       </kendo-drawer-content>
     </div>
   </div>
