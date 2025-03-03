@@ -167,15 +167,18 @@ export class StudentViewComponent {
     this.loading = true;
     if (reset) {
       console.log("ddd")
-      this.data = new Observable<Student[]>();
       this.studentgraph.resetPagination();
+      this.studentgraph.loadMore(this.pageSize, reset).subscribe((d) => {
+        this.loading = false;
+      });
       this.data = this.studentgraph.object;
     } else {
+      this.studentgraph.loadMore(this.pageSize, reset).subscribe((d) => {
+        this.loading = false;
+      });
       this.data = this.studentgraph.object;
     }
-    this.studentgraph.loadMore(this.pageSize, reset).subscribe((d) => {
-      this.loading = false;
-    });
+
   }
 
   public editDataItem: any = {};
@@ -286,7 +289,6 @@ export class StudentViewComponent {
         this.editDataItem = undefined;
       } else {
         //update user
-        console.log(student)
         const formattedDate = this.formatDate(student.dob);
         const newStudent = {
           id: student.id,
@@ -296,6 +298,9 @@ export class StudentViewComponent {
           courseID:student.courseID,
           dob: formattedDate.toString(),
         };
+        this.data = new Observable<Student[]>();
+        // this.studentgraph.resetPagination();
+        this.loadMore(true);
         this.studentgraph.updateStudent(newStudent).subscribe({
           next: async (response) => {
             this.handleNotification(
@@ -304,9 +309,7 @@ export class StudentViewComponent {
               'success'
             );
             console.log("ddd")
-            this.data = new Observable<Student[]>();
-            this.studentgraph.resetPagination();
-            this.loadMore(true);
+  
           },
           error: (err) => {
             this.handleNotification(

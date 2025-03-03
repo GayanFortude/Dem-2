@@ -17,6 +17,7 @@ export class StudentServiceGraphql {
 
 
   constructor(private apollo: Apollo) {
+    this.observable = new BehaviorSubject<any[]>([]); 
     this.object = this.observable.asObservable();
   }
 
@@ -24,21 +25,24 @@ export class StudentServiceGraphql {
     this.skip = 0;  
     this.completed = false; 
     this.data = []; 
-    this.observable.next(this.data); 
+    // this.observable.next(this.data); 
   }
 
 
   loadMore(take: number, reset: boolean): Observable<boolean> { //load grid
-
+    
     if (this.completed) {
       return from([true]);
     }
     take = 10;
-    if (reset) {
-      this.skip = 0;
-      this.data = []; // Clear old data
-      this.observable.next(this.data);
-    }
+    // if (reset) {
+    //   console.log(this.data)
+    //   this.skip = 0;
+    //   this.data = []; // Clear old data
+    //   console.log(this.data)
+    //   this.observable.next(this.data);
+    //   this.object = this.observable.asObservable();
+    // }
    
 
     return this.apollo
@@ -53,7 +57,9 @@ export class StudentServiceGraphql {
           if (values.length === 0) {
             this.completed = true;
           } else {
-        
+            if (reset) {
+              this.resetPagination()
+            }
             this.data = [...this.data, ...values]; 
             this.observable.next(this.data);
             this.skip += values.length;

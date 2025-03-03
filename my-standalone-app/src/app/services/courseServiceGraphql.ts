@@ -32,7 +32,7 @@ export class CourseServiceGraphql {
     this.skip = 0;
     this.completed = false;
     this.data = [];
-    this.observable.next(this.data);
+    // this.observable.next(this.data);
   }
 
   loadMore(take: number, reset: boolean): Observable<boolean> {
@@ -41,10 +41,10 @@ export class CourseServiceGraphql {
     }
     console.log(take,reset)
     if (reset) {
-      console.log(reset)
-      this.skip = 0;
-      this.data = [];
-      this.observable.next(this.data);
+      // console.log(reset)
+      // this.skip = 0;
+      // this.data = [];
+      // this.observable.next(this.data);
     }
 
     this.loading = true; // Show loading spinner in grid
@@ -63,6 +63,10 @@ export class CourseServiceGraphql {
             this.completed = true;console.log("values")
           } 
           else {
+            if (reset) {
+              console.log(reset)
+              this.resetPagination()
+            }
             console.log(values)
             this.data = [...this.data, ...values];
             this.observable.next(this.data);
@@ -82,7 +86,7 @@ export class CourseServiceGraphql {
         .query<{ getAllCourses: { id: string }[] }>({
           query: GET_ALL_COURSES,
         })
-        .toPromise(); // Converts ApolloQueryResult to a Promise
+        .toPromise(); 
   
       return result?.data?.getAllCourses || [];
     }

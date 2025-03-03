@@ -60,16 +60,15 @@
           <kendo-grid-column
             field="name"
             title="Course Name"
-            [width]="100"
+            [width]="300"
           ></kendo-grid-column>
           <kendo-grid-command-column
             title="Command"
-            [width]="150"
+            [width]="90"
             styles="card-list"
           >
             <ng-template kendoGridCellTemplate>
               <button kendoGridEditCommand [primary]="true">Edit</button>
-              <button kendoGridRemoveCommand>Delete</button>
             </ng-template>
           </kendo-grid-command-column>
         </kendo-grid>
