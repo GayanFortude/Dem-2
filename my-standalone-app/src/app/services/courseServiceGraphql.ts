@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { Observable, BehaviorSubject, from } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { finalize, map, tap } from 'rxjs/operators';
 import {
   CREATE_COURSES,
   GET_ALL_COURSES,
@@ -9,99 +9,108 @@ import {
   UPDATE_COURSES,
 } from '../core/graphql.operations';
 
-
 @Injectable()
 export class CourseServiceGraphql {
   public object: Observable<any[]>;
   private observable: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
   private skip = 0;
-  private data: unknown[] = [];
+  private data: any[] = [];
   private completed = false;
 
   constructor(private apollo: Apollo) {
+    this.observable = new BehaviorSubject<any[]>([]);
     this.object = this.observable.asObservable();
   }
   public loading = false;
   resetPagination(): void {
-    //Reset pagination
     this.skip = 0;
     this.completed = false;
     this.data = [];
-    // this.observable.next(this.data);
+    this.observable.next(this.data);
   }
 
-  loadMore(take: number, reset: boolean): Observable<boolean> {
+  loadMore(take: number = 10, reset: boolean = false): Observable<boolean> {
+    console.log(reset, this.skip);
     if (this.completed) {
       return from([true]);
     }
 
-    if (reset) {
-      this.skip = 0;
-      this.data = [];
-    }
-
-    this.loading = true; // Show loading spinner in grid
-
     return this.apollo
-      .watchQuery<any>({
+      .query<any>({
         query: GET_COURSES,
-        fetchPolicy: "network-only",
+        fetchPolicy: 'network-only',
         variables: { limit: take, offset: this.skip },
       })
-      .valueChanges.pipe(
+      .pipe(
         map((result) => result?.data?.getCourses || []),
         tap((values) => {
-        
-          if (values.length === 0 ) {
+          // console.log("Values:", values); // Should log once per call
+          if (values.length === 0) {
             this.completed = true;
-          } 
-          else {
-            if (reset) {
-              this.skip = 0;  
-              this.completed = false; 
-              this.data = []; 
-              this.data = [...this.data, ...values];
-              this.observable.next(this.data);
-              this.skip += values.length;
-            }
-            else{
-              this.data = [...this.data, ...values];
-              this.observable.next(this.data);
-              this.skip += values.length;
-            }
+            console.log('Values:', this.completed);
+          } else {
+            console.log('Reset in processing:', values, this.skip);
+            //  this.data = reset ? [...values] : [...this.data, ...values];
+            this.data = [...this.data, ...values];
+            this.observable.next(this.data);
+            this.skip += values.length;
+            console.log(this.skip);
           }
-       
         }),
         map((values) => values.length > 0)
       );
+    // return this.apollo
+    //   .watchQuery<any>({
+    //     query: GET_COURSES,
+    //     fetchPolicy: "network-only",
+    //     variables: { limit: take, offset: this.skip },
+    //   })
+    //   .valueChanges.pipe(
+    //     map((result) => result?.data?.getCourses || []),
+    //     tap((values) => {
+    //         console.log(values)
+    //       if (values.length === 0 ) {
+    //         this.completed = true;
+    //       }
+    //       else {
+    //         console.log(reset)
+    //           // if(reset){
+    //           //   console.log(this.data)
+    //             this.data = [...values];
+    //             this.observable.next(this.data);
+    //             this.skip += values.length;
+    //           // }else{
+    //           //   this.data = [...this.data, ...values];
+    //           //   this.observable.next(this.data);
+    //           //   this.skip += values.length;
+    //           // }
+    //       }
+
+    //     }),
+    //     map((values) => values.length > 0)
+    //   );
   }
 
+  async getAllCourses(): Promise<{ id: string }[]> {
+    const result = await this.apollo
+      .query<{ getAllCourses: { id: string }[] }>({
+        query: GET_ALL_COURSES,
+      })
+      .toPromise();
 
-  
-    async getAllCourses(): Promise<{ id: string }[]> {
-      const result = await this.apollo
-        .query<{ getAllCourses: { id: string }[] }>({
-          query: GET_ALL_COURSES,
-        })
-        .toPromise(); 
-  
-      return result?.data?.getAllCourses || [];
-    }
-  
+    return result?.data?.getAllCourses || [];
+  }
 
   createCourse(courseData: { name: string }): Observable<any> {
-
     return this.apollo
       .mutate({
-        mutation: CREATE_COURSES, 
+        mutation: CREATE_COURSES,
         variables: { input: courseData },
       })
       .pipe(map((result: any) => result.data?.input));
   }
 
-  updateCourse(courseData: {
-    name: string;
-  }): Observable<any> {
+  updateCourse(courseData: { name: string }): Observable<any> {
     //update data
     return this.apollo
       .mutate({
@@ -110,5 +119,4 @@ export class CourseServiceGraphql {
       })
       .pipe(map((result: any) => result.data?.UpdateCourseInput));
   }
-
 }

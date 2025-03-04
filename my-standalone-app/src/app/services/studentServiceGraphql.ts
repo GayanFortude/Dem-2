@@ -22,15 +22,15 @@ export class StudentServiceGraphql {
   }
 
   resetPagination(): void { //Reset pagination
-    this.skip = 0;  
-    this.completed = false; 
-    this.data = []; 
-    // this.observable.next(this.data); 
+    this.skip = 0;
+    this.completed = false;
+    this.data = [];
+    this.observable.next(this.data);
   }
 
 
   loadMore(take: number, reset: boolean): Observable<boolean> { //load grid
-    
+    console.log(take)
     if (this.completed) {
       return from([true]);
     }
@@ -43,31 +43,25 @@ export class StudentServiceGraphql {
    
 
     return this.apollo
-      .watchQuery<GetStudentResponse>({
+      .query<GetStudentResponse>({
         query: GET_STUDENTS,
         fetchPolicy: "network-only",
         variables: { limit: take, offset: this.skip },
       })
-      .valueChanges.pipe(
+      .pipe(
         map((result) => result.data?.getStudent?.student),
         tap(async(values) => {
           if (values.length === 0) {
             this.completed = true;
           } else {
-            if (reset) {
-              this.skip = 0;  
-              this.completed = false; 
-              this.data = []; 
-              this.data = [...this.data, ...values]; 
-              this.observable.next(this.data);
-              this.skip += values.length;
-            }
-            else{
-              this.data = [...this.data, ...values]; 
-              this.observable.next(this.data);
-              this.skip += values.length;
-            }
+            console.log('Reset in processing:', values, this.skip);
+            //  this.data = reset ? [...values] : [...this.data, ...values];
+            this.data = [...this.data, ...values];
+            this.observable.next(this.data);
+            this.skip += take;
+            console.log(this.skip);
           }
+
         }),
         map((values) => values.length > 0)
       );

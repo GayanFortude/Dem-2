@@ -13,7 +13,7 @@ import { ButtonsModule } from '@progress/kendo-angular-buttons';
 import { SVGIcon } from '@progress/kendo-svg-icons';
 import { State } from '@progress/kendo-data-query';
 import { ExcelExportModule } from '@progress/kendo-angular-excel-export';
-import { Observable } from 'rxjs';
+import { Observable, Subject, switchMap, timer } from 'rxjs';
 import { DialogModule } from '@progress/kendo-angular-dialog';
 import { InputsModule } from '@progress/kendo-angular-inputs';
 import { LabelModule } from '@progress/kendo-angular-label';
@@ -52,11 +52,18 @@ export class CoursesComponent {
   @ViewChild('grid') grid: any;
   constructor(
     private coursegraph: CourseServiceGraphql,
-    // private wsService: WebSocketService,
-    private notificationService: NotificationService,
-    private fileDownloadService: FileDownloadService
-  ) {}
-
+    private notificationService: NotificationService
+  ) {
+   
+    this.scrollSubject
+      .pipe(
+        switchMap(() => timer(100)), 
+      )
+      .subscribe(() => {
+        this.loadMore(false);
+      });
+  }
+  private scrollSubject = new Subject<void>();
   public data: Observable<any[]> = new Observable<Course[]>();
 
   public loading: boolean = false;
@@ -74,7 +81,7 @@ export class CoursesComponent {
   public downloadIcon: SVGIcon = downloadIcon;
 
   ngOnInit() {
-    this.loadMore();
+     this.loadMore();
   }
 
   private handleNotification(
@@ -101,18 +108,23 @@ export class CoursesComponent {
     }
   }
 
+
+  onScrollBottom(): void {
+    this.scrollSubject.next();
+  }
+  
   public loadMore(reset: boolean = false): void {
-    //Loading data to grid
     this.loading = true;
-    if (reset) {
-      this.data = new Observable<Course[]>();
-      this.coursegraph.resetPagination();
-      this.data = this.coursegraph.object;
-    } else {
-      this.data = this.coursegraph.object;
-    }
-    this.coursegraph.loadMore(this.pageSize, reset).subscribe((d) => {
-      this.loading = false;
+    this.data = this.coursegraph.object;
+    this.coursegraph.loadMore(this.pageSize, reset).subscribe({
+      next: (hasMoreData: boolean) => {
+        console.log('Has more data:', hasMoreData);
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Load more error:', err);
+        this.loading = false;
+      }
     });
   }
 
@@ -141,6 +153,7 @@ export class CoursesComponent {
   }
 
   public saveHandler(course: Course): void {
+    console.log(course);
     if (course !== null) {
       if (this.isNew == true) {
         //save user
@@ -149,13 +162,14 @@ export class CoursesComponent {
         };
         this.coursegraph.createCourse(newCourse).subscribe({
           next: (response) => {
+            this.coursegraph.resetPagination();
+            this.loadMore(true);
             this.handleNotification(
               'message',
               `Data saved successfully`,
               'success'
             );
-            this.loadMore(true);
-            window.location.reload()
+            // window.location.reload()
           },
           error: (err) => {
             this.handleNotification(
@@ -168,15 +182,16 @@ export class CoursesComponent {
         this.editDataItem = undefined;
       } else {
         //update user
-
         const newCourse = {
           id: course.id,
           name: course.name,
         };
         this.coursegraph.updateCourse(newCourse).subscribe({
           next: async (response) => {
-            this.loadMore(true);
-            window.location.reload()
+            console.log(response);
+            this.coursegraph.resetPagination();
+            this.loadMore(true); 
+            // window.location.reload()
             this.handleNotification(
               'message',
               `Data saved successfully`,
@@ -191,8 +206,10 @@ export class CoursesComponent {
             );
           },
         });
+
         this.editDataItem = undefined;
       }
+      // this.loadMore(false);
     }
   }
 

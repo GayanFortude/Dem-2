@@ -31,7 +31,7 @@
           [data]="data | async"
           [loading]="loading"
           [height]="400"
-          (scrollBottom)="loadMore(false)"
+          (scrollBottom)="onScrollBottom()"
           (edit)="editHandler($event)"
           (add)="addHandler()"
         >

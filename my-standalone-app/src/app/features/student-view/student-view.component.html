@@ -52,7 +52,7 @@
         [data]="data | async"
         [loading]="loading"
         [height]="400"
-        (scrollBottom)="loadMore(false)"
+        (scrollBottom)="onScrollBottom()"
         (edit)="editHandler($event)"
         (remove)="removeHandler($event)"
         (add)="addHandler()"
