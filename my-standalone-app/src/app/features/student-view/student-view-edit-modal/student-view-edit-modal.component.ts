@@ -70,7 +70,6 @@ export class StudentViewEditModalComponent {
     try {
       this.courses = await this.courseService.getAllCourses();
     } catch (error) {
-     
       this.courses = [];
     }
   }

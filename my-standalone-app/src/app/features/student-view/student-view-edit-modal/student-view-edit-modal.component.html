@@ -2,7 +2,7 @@
   class="custom-dialog"
   *ngIf="active"
   [width]="300"
-  [height]="450"
+  [height]="550"
   (close)="closeForm()"
 >
   <kendo-dialog-titlebar>
@@ -73,7 +73,7 @@
         [data]="courses"
         textField="name"
         (valueChange)="onChangeCourse($event)"
-        valueField="id"
+        valueField="code"
         formControlName="courseID"
         [valuePrimitive]="true"
         required

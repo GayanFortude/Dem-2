@@ -80,6 +80,7 @@ export const GET_COURSES = gql`
     getCourses(limit: $limit, offset: $offset) {
       id
       name
+      code
       student {
         id
         fname
@@ -94,6 +95,7 @@ export const GET_ALL_COURSES = gql`
     getAllCourses {
       id
       name
+      code
     }
   }
 `;

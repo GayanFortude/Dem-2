@@ -50,6 +50,7 @@ export class CourseService {
     try {
       const course = this.courseRepository.create({
         name: createCourseInput.name,
+        code: createCourseInput.code,
       });
       return this.courseRepository.save(course);
     } catch (error) {
@@ -65,11 +66,11 @@ export class CourseService {
     }
   }
 
-  async findById(id: string): Promise<Course> {
+  async findById(code: string): Promise<Course> {
     try {
-      const course = await this.courseRepository.findOne({ where: { id } });
+      const course = await this.courseRepository.findOne({ where: { code:code } });
       if (!course) {
-        throw new NotFoundException(`Course with ID ${id} not found`);
+        throw new NotFoundException(`Course with ID ${code} not found`);
       }
       return course;
     } catch (error) {
@@ -79,7 +80,7 @@ export class CourseService {
 
   async getCourseId(id: string): Promise<Course> {
     try {
-      const course = await this.courseRepository.findOne({ where: { id: id } });
+      const course = await this.courseRepository.findOne({ where: { code: id } });
       if (!course) {
         throw new NotFoundException(`Course with ID ${id} not found`);
       }

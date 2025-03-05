@@ -5,5 +5,6 @@ export const environment = {
     'Last Name (Surname)',
     'Email Address',
     'Date of birth',
+    'CourseId',
   ],
 };

@@ -1,4 +1,4 @@
-<kendo-dialog  class="custom-dialog" *ngIf="active" [width]="300" [height]="250" (close)="closeForm()">
+<kendo-dialog  class="custom-dialog" *ngIf="active" [width]="300" [height]="300" (close)="closeForm()">
     <kendo-dialog-titlebar>
       {{ isNew ? "Add new Course" : "Edit Course" }}
     </kendo-dialog-titlebar>
@@ -9,6 +9,12 @@
         <kendo-textbox #name formControlName="name" required></kendo-textbox>
         <kendo-formhint>Type Course name</kendo-formhint>
         <kendo-formerror>Error: Course name is required</kendo-formerror>
+      </kendo-formfield>
+      <kendo-formfield>
+        <kendo-label [for]="code" text="Course Code" labelCssClass="k-form-label"></kendo-label>
+        <kendo-textbox  #code formControlName="code"  required></kendo-textbox>
+        <kendo-formhint>Type Course Code</kendo-formhint>
+        <kendo-formerror>Error: Course Code is required</kendo-formerror>
       </kendo-formfield>
     </form>
   

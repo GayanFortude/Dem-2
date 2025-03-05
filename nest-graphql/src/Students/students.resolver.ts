@@ -98,7 +98,7 @@ export class StudentResolver {
 
   @ResolveField((of) => Course)
   course(@Parent() student: Student) {
-    return { __typename: 'course', id: student.courseID };
+    return { __typename: 'course', code: student.courseID };
   }
 
 }

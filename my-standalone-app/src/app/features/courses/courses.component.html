@@ -1,63 +1,67 @@
 <div class="content-new">
-    <div class="content-2">
-      <diV class="card-list">
-        <kendo-card width="360px">
-          <kendo-card-header class="k-hstack">
-            <div>
-              <h1 kendoCardTitle>Manual handling</h1>
-            </div>
-          </kendo-card-header>
-          <kendo-card-body class="card-body">
-            <button
-              class="card-button"
-              [svgIcon]="userIcon"
-              kendoButton
-              (click)="onAdd()"
-            ></button>
-            <button
-              class="card-button"
-              [svgIcon]="redoIcon"
-              kendoButton
-                (click)="loadMore()"
-            ></button>
-          </kendo-card-body>
-        </kendo-card>
-      </diV>
-  
-      <kendo-drawer-content class="custom-content">
-        <kendo-grid
-          class="custom-content-column"
-          #grid
-          [data]="data | async"
-          [loading]="loading"
-          [height]="400"
-          (scrollBottom)="onScrollBottom()"
-          (edit)="editHandler($event)"
-          (add)="addHandler()"
+  <div class="content-2">
+    <diV class="card-list">
+      <kendo-card width="360px">
+        <kendo-card-header class="k-hstack">
+          <div>
+            <h1 kendoCardTitle>Manual handling</h1>
+          </div>
+        </kendo-card-header>
+        <kendo-card-body class="card-body">
+          <button
+            class="card-button"
+            [svgIcon]="userIcon"
+            kendoButton
+            (click)="onAdd()"
+          ></button>
+          <button
+            class="card-button"
+            [svgIcon]="redoIcon"
+            kendoButton
+            (click)="loadMore()"
+          ></button>
+        </kendo-card-body>
+      </kendo-card>
+    </diV>
+
+    <kendo-drawer-content class="custom-content">
+      <kendo-grid
+        class="custom-content-column"
+        #grid
+        [data]="data | async"
+        [loading]="loading"
+        [height]="400"
+        (scrollBottom)="onScrollBottom()"
+        (edit)="editHandler($event)"
+        (add)="addHandler()"
+      >
+        <kendo-grid-column
+          field="name"
+          title="Course Name"
+          [width]="150"
+        ></kendo-grid-column>
+        <kendo-grid-column
+          field="code"
+          title="Course Code"
+          [width]="150"
+        ></kendo-grid-column>
+        <kendo-grid-command-column
+          title="Command"
+          [width]="90"
+          styles="card-list"
         >
-          <kendo-grid-column
-            field="name"
-            title="Course Name"
-            [width]="300"
-          ></kendo-grid-column>
-          <kendo-grid-command-column
-            title="Command"
-            [width]="90"
-            styles="card-list"
-          >
-            <ng-template kendoGridCellTemplate>
-              <button kendoGridEditCommand [primary]="true">Edit</button>
-            </ng-template>
-          </kendo-grid-command-column>
-        </kendo-grid>
-       <app-manage-courses
-          [model]="editDataItem"
-          [isNew]="isNew"
-          (save)="saveHandler($event)"
-          (cancel)="cancelHandler()"
-        >
-        </app-manage-courses>
-      </kendo-drawer-content>
-    </div>
+          <ng-template kendoGridCellTemplate>
+            <button kendoGridEditCommand [primary]="true">Edit</button>
+          </ng-template>
+        </kendo-grid-command-column>
+      </kendo-grid>
+      <app-manage-courses
+        [model]="editDataItem"
+        [isNew]="isNew"
+        (save)="saveHandler($event)"
+        (cancel)="cancelHandler()"
+      >
+      </app-manage-courses>
+    </kendo-drawer-content>
   </div>
-  
+</div>

@@ -21,9 +21,8 @@ import { HttpClientJsonpModule } from '@angular/common/http';
 import { UploadsModule } from '@progress/kendo-angular-upload';
 import { SocketIoModule } from 'ngx-socket-io';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { FileDownloadService } from '../../services/FiledownloadService';
 import { redoIcon, userIcon, downloadIcon } from '@progress/kendo-svg-icons';
-import { ManageCoursesComponent } from './manage-courses/manage-courses.component';
+import { ManageCoursesComponent } from '../../manage-courses/manage-courses.component';
 import { CourseServiceGraphql } from '../../services/courseServiceGraphql';
 
 @Component({
@@ -54,14 +53,9 @@ export class CoursesComponent {
     private coursegraph: CourseServiceGraphql,
     private notificationService: NotificationService
   ) {
-   
-    this.scrollSubject
-      .pipe(
-        switchMap(() => timer(100)), 
-      )
-      .subscribe(() => {
-        this.loadMore(false);
-      });
+    this.scrollSubject.pipe(switchMap(() => timer(100))).subscribe(() => {
+      this.loadMore(false);
+    });
   }
   private scrollSubject = new Subject<void>();
   public data: Observable<any[]> = new Observable<Course[]>();
@@ -81,7 +75,7 @@ export class CoursesComponent {
   public downloadIcon: SVGIcon = downloadIcon;
 
   ngOnInit() {
-     this.loadMore();
+    this.loadMore();
   }
 
   private handleNotification(
@@ -108,11 +102,10 @@ export class CoursesComponent {
     }
   }
 
-
   onScrollBottom(): void {
     this.scrollSubject.next();
   }
-  
+
   public loadMore(reset: boolean = false): void {
     this.loading = true;
     this.data = this.coursegraph.object;
@@ -124,7 +117,7 @@ export class CoursesComponent {
       error: (err) => {
         console.error('Load more error:', err);
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -159,6 +152,7 @@ export class CoursesComponent {
         //save user
         const newCourse = {
           name: course.name,
+          code: course.code,
         };
         this.coursegraph.createCourse(newCourse).subscribe({
           next: (response) => {
@@ -185,12 +179,13 @@ export class CoursesComponent {
         const newCourse = {
           id: course.id,
           name: course.name,
+          code: course.code,
         };
         this.coursegraph.updateCourse(newCourse).subscribe({
           next: async (response) => {
             console.log(response);
             this.coursegraph.resetPagination();
-            this.loadMore(true); 
+            this.loadMore(true);
             // window.location.reload()
             this.handleNotification(
               'message',

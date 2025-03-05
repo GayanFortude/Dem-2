@@ -12,6 +12,7 @@
             [multiple]="false"
             (upload)="onUpload($event)"
             [autoUpload]="false"
+            [restrictions]="uploadRestrictions"
           >
           </kendo-upload>
         </kendo-card-body>
@@ -33,7 +34,7 @@
             class="card-button"
             [svgIcon]="redoIcon"
             kendoButton
-            (click)="loadMore()"
+            (click)="refresh()"
           ></button>
           <button
             class="card-button"

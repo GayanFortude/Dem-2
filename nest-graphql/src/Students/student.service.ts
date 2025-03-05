@@ -76,7 +76,7 @@ export class StudentService {
           86400 *
           1000,
       ),
-      courseID:''
+      courseID:element[environment.requiredFields[4]] as string,
     });
     return student;
   }

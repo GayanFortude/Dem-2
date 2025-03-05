@@ -12,7 +12,7 @@ export class CourseResolver {
 
   @ResolveField((of) => [Student])
   student(@Parent() course: Course): Promise<Student[]> {
-      return this.studentsService.forCourse(course.id);
+      return this.studentsService.forCourse(course.code);
   }
 
 }

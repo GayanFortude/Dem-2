@@ -79,8 +79,11 @@ export class StudentViewComponent {
   public redoIcon: SVGIcon = redoIcon;
   public downloadIcon: SVGIcon = downloadIcon;
 
+
   ngOnInit() {
+
     this.loadMore();
+
     this.scrollSubject.pipe(switchMap(() => timer(100))).subscribe(() => {
       this.loadMore(false);
     });
@@ -94,7 +97,9 @@ export class StudentViewComponent {
       if (filePath != null) {
         this.fileDownloadService.downloadFile(filePath);
       }
+      
     });
+
   }
 
   private handleNotification(
@@ -159,6 +164,12 @@ export class StudentViewComponent {
     event.preventDefault();
   }
 
+
+  refresh(){
+    window.location.reload()
+  }
+
+
   public loadMore(reset: boolean = false): void {
     this.loading = true;
     this.data = this.studentgraph.object;
@@ -174,21 +185,7 @@ export class StudentViewComponent {
     });
   }
 
-  // public async loadMore(reset: boolean = false): Promise<void> {
-  //   //Loading data to grid
-  //   this.loading = true;
-  //   if (reset) {
-  //     this.data = await new Observable<Student[]>();
-  //     await this.studentgraph.resetPagination();
-  //     this.data = this.studentgraph.object;
-  //   } else {
-  //     this.data = this.studentgraph.object;
-  //   }
-  //   this.studentgraph.loadMore(this.pageSize, reset).subscribe((d) => {
-  //     this.loading = false;
-  //   });
-  // }
-
+ 
   public editDataItem: any = {};
   public isNew: boolean = false;
 
@@ -279,7 +276,7 @@ export class StudentViewComponent {
           fname: student.fname,
           lname: student.lname,
           email: student.email,
-          courseID: '',
+          courseID: student.courseID,
           dob: formattedDate.toString(),
         };
         this.studentgraph.createStudent(newStudent).subscribe({
@@ -355,4 +352,7 @@ export class StudentViewComponent {
   onScrollBottom(): void {
     this.scrollSubject.next();
   }
+  public uploadRestrictions = {
+  allowedExtensions: ['.xlsx', '.xls'],
+};
 }

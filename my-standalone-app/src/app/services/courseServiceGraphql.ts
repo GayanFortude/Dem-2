@@ -44,14 +44,13 @@ export class CourseServiceGraphql {
       .pipe(
         map((result) => result?.data?.getCourses || []),
         tap((values) => {
-          // console.log("Values:", values); // Should log once per call
           if (values.length === 0) {
             this.completed = true;
             console.log('Values:', this.completed);
           } else {
             console.log('Reset in processing:', values, this.skip);
             //  this.data = reset ? [...values] : [...this.data, ...values];
-            this.data = [...this.data, ...values];
+            this.data = reset ? [...values] : [...this.data, ...values];
             this.observable.next(this.data);
             this.skip += values.length;
             console.log(this.skip);
@@ -59,36 +58,6 @@ export class CourseServiceGraphql {
         }),
         map((values) => values.length > 0)
       );
-    // return this.apollo
-    //   .watchQuery<any>({
-    //     query: GET_COURSES,
-    //     fetchPolicy: "network-only",
-    //     variables: { limit: take, offset: this.skip },
-    //   })
-    //   .valueChanges.pipe(
-    //     map((result) => result?.data?.getCourses || []),
-    //     tap((values) => {
-    //         console.log(values)
-    //       if (values.length === 0 ) {
-    //         this.completed = true;
-    //       }
-    //       else {
-    //         console.log(reset)
-    //           // if(reset){
-    //           //   console.log(this.data)
-    //             this.data = [...values];
-    //             this.observable.next(this.data);
-    //             this.skip += values.length;
-    //           // }else{
-    //           //   this.data = [...this.data, ...values];
-    //           //   this.observable.next(this.data);
-    //           //   this.skip += values.length;
-    //           // }
-    //       }
-
-    //     }),
-    //     map((values) => values.length > 0)
-    //   );
   }
 
   async getAllCourses(): Promise<{ id: string }[]> {

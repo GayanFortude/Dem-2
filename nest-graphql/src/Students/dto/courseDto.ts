@@ -3,12 +3,13 @@ import { Student } from '../entities/student.entity';
 
 @ObjectType()
 @Directive('@extends')
-@Directive('@key(fields: "id")')
+@Directive('@key(fields: "code")')
 export class Course {
-  @Field((type) => ID)
   @Directive('@external')
   id: string;
-
+  @Field((type) => ID)
+  @Directive('@external')
+  code: string;
   @Field((type) => [Student])
-  student: Student[];
+  student?: Student[];
 }

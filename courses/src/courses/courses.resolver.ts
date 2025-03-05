@@ -63,6 +63,7 @@ export class CourseResolver {
   @Mutation(() => Course)
   async createCourse(@Args('input') input: CreateCourseInput) {
     try {
+      console.log(input)
       return this.courseService.create(input);
     } catch (error) {
       if (error instanceof BadRequestException) {
@@ -87,7 +88,7 @@ export class CourseResolver {
   }
 
   @ResolveReference()
-  resolvereferance(ref: { __typename: string; id: string }) {
-    return this.courseService.findById(ref.id);
+  resolvereferance(ref: { __typename: string; code: string }) {
+    return this.courseService.findById(ref.code);
   }
 }

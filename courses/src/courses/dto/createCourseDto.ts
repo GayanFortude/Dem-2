@@ -4,5 +4,6 @@ import { Field, InputType } from "@nestjs/graphql";
 export class CreateCourseInput {
   @Field()
   name: string;
-
+  @Field()
+  code: string;
 }

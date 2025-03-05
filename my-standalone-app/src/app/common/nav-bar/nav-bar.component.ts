@@ -18,20 +18,17 @@ interface CustomDrawerItem extends DrawerItem {
 })
 export class NavBarComponent {
   @ViewChild('drawer') drawer: any;
-  isExpanded = false;
-  collapse() {
-    this.isExpanded = false;
-  }
+  isExpanded = true;
 
-  toggle() {
-    this.isExpanded = !this.isExpanded;
-  }
+
+  // toggle() {
+  //   this.isExpanded = !this.isExpanded;
+  // }
 
   constructor(private router: Router) {}
     public selected = "Inbox";
     public menuSvg: SVGIcon = menuIcon;
     public onSelect(event: DrawerSelectEvent): void {
-      this.drawer.toggle(); 
       this.router.navigate([event.item.route]); 
     }
   
