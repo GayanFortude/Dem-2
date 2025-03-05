@@ -21,7 +21,6 @@ import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 export class StudentViewEditModalComponent {
   @Input() public isNew = false;
   @Input() public set model(student: Student) {
-
     if (student !== undefined) {
       if (Object.keys(student).length !== 0) {
         this.active = true;
@@ -36,6 +35,7 @@ export class StudentViewEditModalComponent {
         dob: this.dateDB,
         courseId: student.courseID || null
       });
+      this.ngOnInit();
     }
     this.dateUI=this.dateDB
   }

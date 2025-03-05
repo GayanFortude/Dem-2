@@ -8,13 +8,17 @@
           </div>
         </kendo-card-header>
         <kendo-card-body class="card-body">
-          <kendo-upload
-            [multiple]="false"
-            (upload)="onUpload($event)"
-            [autoUpload]="false"
-            [restrictions]="uploadRestrictions"
-          >
-          </kendo-upload>
+          <div class="custom-upload">
+            <input type="file" id="fileInput" (change)="onUpload($event)" hidden />
+            <label for="fileInput" class="upload-btn">Select files...</label>
+            <div class="upload-list" *ngIf="selectedFile">
+              <span class="file-icon">📄</span>
+              <span class="file-name">{{ selectedFile.name }}</span>
+              <span class="file-error" *ngIf="uploadError">File failed to upload.</span>
+              <button class="retry-btn" *ngIf="uploadError" (click)="retryUpload()">↻</button>
+              <button class="delete-btn" (click)="removeFile()">✖</button>
+            </div>
+          </div>
         </kendo-card-body>
       </kendo-card>
       <kendo-card width="360px">
@@ -84,7 +88,7 @@
           [width]="50"
         ></kendo-grid-column>
         <kendo-grid-command-column
-          title="Command"
+          title="Actions"
           [width]="150"
           styles="card-list"
         >

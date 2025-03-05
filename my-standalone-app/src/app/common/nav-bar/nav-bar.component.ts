@@ -20,11 +20,6 @@ export class NavBarComponent {
   @ViewChild('drawer') drawer: any;
   isExpanded = true;
 
-
-  // toggle() {
-  //   this.isExpanded = !this.isExpanded;
-  // }
-
   constructor(private router: Router) {}
     public selected = "Inbox";
     public menuSvg: SVGIcon = menuIcon;

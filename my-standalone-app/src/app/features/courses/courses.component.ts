@@ -22,8 +22,9 @@ import { UploadsModule } from '@progress/kendo-angular-upload';
 import { SocketIoModule } from 'ngx-socket-io';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { redoIcon, userIcon, downloadIcon } from '@progress/kendo-svg-icons';
-import { ManageCoursesComponent } from '../../manage-courses/manage-courses.component';
+import { ManageCoursesComponent } from './manage-courses/manage-courses.component';
 import { CourseServiceGraphql } from '../../services/courseServiceGraphql';
+import { CourseStudentComponent } from './course-student/course-student.component';
 
 @Component({
   selector: 'app-courses',
@@ -42,6 +43,7 @@ import { CourseServiceGraphql } from '../../services/courseServiceGraphql';
     HttpClientJsonpModule,
     UploadsModule,
     SocketIoModule,
+    CourseStudentComponent
   ],
   providers: [CourseServiceGraphql],
   templateUrl: './courses.component.html',
@@ -122,6 +124,7 @@ export class CoursesComponent {
   }
 
   public editDataItem: any = {};
+  public editStudentItem: any = undefined;
   public isNew: boolean = false;
 
   public addHandler(): void {
@@ -132,7 +135,11 @@ export class CoursesComponent {
     };
     this.isNew = true;
   }
-
+  public viewHandler(args: any): void {
+    console.log(args.code)
+    this.editStudentItem = args.code;
+    this.isNew = false;
+  }
   public editHandler(args: AddEvent): void {
     //edit
     this.editDataItem = args.dataItem;
@@ -163,7 +170,6 @@ export class CoursesComponent {
               `Data saved successfully`,
               'success'
             );
-            // window.location.reload()
           },
           error: (err) => {
             this.handleNotification(
@@ -186,7 +192,6 @@ export class CoursesComponent {
             console.log(response);
             this.coursegraph.resetPagination();
             this.loadMore(true);
-            // window.location.reload()
             this.handleNotification(
               'message',
               `Data saved successfully`,
@@ -204,12 +209,14 @@ export class CoursesComponent {
 
         this.editDataItem = undefined;
       }
-      // this.loadMore(false);
     }
   }
 
   public cancelHandler(): void {
     this.editDataItem = undefined;
+  }
+  public cancelStudentHandler(): void {
+    this.editStudentItem = undefined;
   }
 
   public cancelFileHandler(): void {

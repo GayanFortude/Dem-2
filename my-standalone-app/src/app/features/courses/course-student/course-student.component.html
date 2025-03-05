@@ -1,0 +1,46 @@
+<kendo-dialog
+  class="custom-dialog"
+  *ngIf="active"
+  [width]="600"
+  [height]="550"
+  (close)="closeForm()"
+>
+  <kendo-dialog-titlebar>
+    {{ "View Students" }}
+  </kendo-dialog-titlebar>
+
+  <kendo-drawer-content class="custom-content">
+    <kendo-grid
+      class="custom-content-column"
+      #grid
+      [data]="data"
+      [loading]="loading"
+    >
+      <!-- (scrollBottom)="onScrollBottom()"
+    (edit)="editHandler($event)"
+    (remove)="removeHandler($event)"
+    (add)="addHandler()" -->
+
+      <kendo-grid-column
+        field="fname"
+        title="First Name"
+        [width]="100"
+      ></kendo-grid-column>
+      <kendo-grid-column
+        field="lname"
+        title="Last Name"
+        [width]="100"
+      ></kendo-grid-column>
+      <kendo-grid-column
+        field="email"
+        title="Email"
+        [width]="250"
+      ></kendo-grid-column>
+    </kendo-grid>
+  </kendo-drawer-content>
+  <kendo-dialog-actions layout="start">
+    <button kendoButton [svgIcon]="cancelIcon" (click)="onCancel($event)">
+      Cancel
+    </button>
+  </kendo-dialog-actions>
+</kendo-dialog>

@@ -48,10 +48,10 @@ export class CourseResolver {
 
   @Query(() => Course, { nullable: true })
   async course(
-    @Args('id', { type: () => String }) id: string,
+    @Args('code', { type: () => String }) code: string,
   ): Promise<Course> {
     try {
-      return this.courseService.getCourseId(id); 
+      return this.courseService.getCourseId(code); 
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw new BadRequestException(error.message);

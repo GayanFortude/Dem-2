@@ -45,16 +45,20 @@
           title="Course Code"
           [width]="150"
         ></kendo-grid-column>
-        <kendo-grid-command-column
-          title="Command"
-          [width]="90"
-          styles="card-list"
-        >
-          <ng-template kendoGridCellTemplate>
+        <kendo-grid-command-column title="Actions" [width]="90">
+          <ng-template kendoGridCellTemplate let-dataItem>
             <button kendoGridEditCommand [primary]="true">Edit</button>
+            <button kendoButton (click)="viewHandler(dataItem)">View</button>
           </ng-template>
         </kendo-grid-command-column>
+        >
       </kendo-grid>
+      <app-course-student
+        [model]="editStudentItem"
+        [isNew]="isNew"
+        (cancel)="cancelStudentHandler()"
+      >
+      </app-course-student>
       <app-manage-courses
         [model]="editDataItem"
         [isNew]="isNew"

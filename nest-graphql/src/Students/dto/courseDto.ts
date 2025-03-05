@@ -5,8 +5,6 @@ import { Student } from '../entities/student.entity';
 @Directive('@extends')
 @Directive('@key(fields: "code")')
 export class Course {
-  @Directive('@external')
-  id: string;
   @Field((type) => ID)
   @Directive('@external')
   code: string;

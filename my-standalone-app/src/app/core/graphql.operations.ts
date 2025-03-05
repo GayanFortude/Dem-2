@@ -99,3 +99,18 @@ export const GET_ALL_COURSES = gql`
     }
   }
 `;
+
+
+export const GET_STUDENT_COURSES = gql`
+  query course($code: String!) {
+    course(code: $code) {
+      student{
+       id
+       fname
+       lname
+       email
+     }
+    }
+  }
+`;
+

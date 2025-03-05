@@ -9,7 +9,7 @@ import { FormFieldModule, InputsModule } from '@progress/kendo-angular-inputs';
 import { DialogModule } from '@progress/kendo-angular-dialog';
 import { LabelModule } from '@progress/kendo-angular-label';
 import { cancelIcon, saveIcon, SVGIcon } from '@progress/kendo-svg-icons';
-import { Course } from '../types/types';
+import { Course } from '../../../types/types';
 import { CommonModule } from '@angular/common';
 import { HttpClientJsonpModule } from '@angular/common/http';
 import {
@@ -17,7 +17,7 @@ import {
   KENDO_DATEINPUTS,
 } from '@progress/kendo-angular-dateinputs';
 import { ButtonsModule } from '@progress/kendo-angular-buttons';
-import { CourseServiceGraphql } from '../services/courseServiceGraphql';
+import { CourseServiceGraphql } from '../../../services/courseServiceGraphql';
 import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 
 @Component({

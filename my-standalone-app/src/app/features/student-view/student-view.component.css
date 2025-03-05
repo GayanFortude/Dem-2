@@ -193,3 +193,56 @@ p {
   height: 100%; 
   min-height: 0; 
 }
+
+
+
+.custom-upload {
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 250px;
+  border-radius: 5px;
+}
+
+.upload-btn {
+  display: inline-block;
+  padding: 5px 10px;
+  background:  #ff6358;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.upload-status {
+  margin-left: 10px;
+  color: #555;
+}
+
+.upload-list {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.file-icon {
+  margin-right: 5px;
+}
+
+.file-name {
+  flex-grow: 1;
+}
+
+.file-error {
+  color: red;
+  margin-left: 10px;
+}
+
+.retry-btn,
+.delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 5px;
+  font-size: 16px;
+}
+

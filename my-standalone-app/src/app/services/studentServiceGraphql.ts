@@ -30,7 +30,6 @@ export class StudentServiceGraphql {
 
 
   loadMore(take: number, reset: boolean): Observable<boolean> { //load grid
-    console.log(take)
     if (this.completed) {
       return from([true]);
     }
@@ -54,12 +53,10 @@ export class StudentServiceGraphql {
           if (values.length === 0) {
             this.completed = true;
           } else {
-            console.log('Reset in processing:', values, this.skip);
             //  this.data = reset ? [...values] : [...this.data, ...values];
             this.data = [...this.data, ...values];
             this.observable.next(this.data);
             this.skip += take;
-            console.log(this.skip);
           }
 
         }),

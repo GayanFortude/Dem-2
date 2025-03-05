@@ -75,6 +75,7 @@ export class StudentViewComponent {
     take: 10,
   };
   isNewFile = false;
+
   public userIcon: SVGIcon = userIcon;
   public redoIcon: SVGIcon = redoIcon;
   public downloadIcon: SVGIcon = downloadIcon;
@@ -92,12 +93,10 @@ export class StudentViewComponent {
       const parsedData = JSON.parse(d);
       const { event, data } = parsedData;
       const { message, filePath, userId, type, timestamp } = data;
-
       this.handleNotification('message', message, type);
       if (filePath != null) {
         this.fileDownloadService.downloadFile(filePath);
       }
-      
     });
 
   }
@@ -124,45 +123,66 @@ export class StudentViewComponent {
     this.wsService.disconnect();
   }
 
+
+  selectedFile: File | null = null;
+  uploadError: boolean = false;
+
+  
   async onUpload(event: any): Promise<any> {
-    if (event.files.length === 0) {
+    if (event.target.files.length === 0) {
       return;
     }
-
-    const file = event.files[0].rawFile;
+  
+    this.selectedFile = event.target.files[0];
     const formData = new FormData();
-    formData.append('file', file);
+    if (this.selectedFile) {
+      const validFileTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
+      if (!validFileTypes.includes(this.selectedFile.type)) {
+        this.uploadError = true;
+        this.handleNotification('message', 'Please select a valid Excel file (.xls or .xlsx)', 'error');
+        return;
+      }
+      formData.append('file', this.selectedFile);
+    }
+
     document.cookie = 'token=user1; path=/;';
+
     try {
+   
       const response = await fetch(this.fileuploadEndpoint, {
         method: 'POST',
         credentials: 'include',
         body: formData,
       });
+  
       if (response.ok) {
+        console.log("File uploaded successfully");
+        this.uploadError = false;
+        this.selectedFile = null; 
         const result = await response.json();
-        this.handleNotification(
-          'message',
-          `File saved successfully`,
-          'success'
-        );
+        this.handleNotification('message', `File saved successfully`, 'success');
       } else {
-        const errorText = await response.text();
-        this.handleNotification(
-          'message',
-          `n error occurred during file upload`,
-          'error'
-        );
+        this.uploadError = true;
+        this.handleNotification('message', `An error occurred during file upload`, 'error');
       }
     } catch (error) {
-      this.handleNotification(
-        'message',
-        `n error occurred during file upload ${error}`,
-        'error'
-      );
+      this.uploadError = true;
+      this.handleNotification('message', `An error occurred during file upload: ${error}`, 'error');
     }
-    event.preventDefault();
   }
+  
+  retryUpload() {
+    if (this.selectedFile) {
+      const fakeEvent = { target: { files: [this.selectedFile] } };
+      this.onUpload(fakeEvent);
+    }
+  }
+  
+  removeFile() {
+    this.selectedFile = null;
+    this.uploadError = false;
+  }
+  
 
 
   refresh(){
@@ -352,7 +372,5 @@ export class StudentViewComponent {
   onScrollBottom(): void {
     this.scrollSubject.next();
   }
-  public uploadRestrictions = {
-  allowedExtensions: ['.xlsx', '.xls'],
-};
+
 }

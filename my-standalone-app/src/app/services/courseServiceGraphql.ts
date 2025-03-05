@@ -6,6 +6,7 @@ import {
   CREATE_COURSES,
   GET_ALL_COURSES,
   GET_COURSES,
+  GET_STUDENT_COURSES,
   UPDATE_COURSES,
 } from '../core/graphql.operations';
 
@@ -30,7 +31,6 @@ export class CourseServiceGraphql {
   }
 
   loadMore(take: number = 10, reset: boolean = false): Observable<boolean> {
-    console.log(reset, this.skip);
     if (this.completed) {
       return from([true]);
     }
@@ -46,9 +46,7 @@ export class CourseServiceGraphql {
         tap((values) => {
           if (values.length === 0) {
             this.completed = true;
-            console.log('Values:', this.completed);
           } else {
-            console.log('Reset in processing:', values, this.skip);
             //  this.data = reset ? [...values] : [...this.data, ...values];
             this.data = reset ? [...values] : [...this.data, ...values];
             this.observable.next(this.data);
@@ -63,11 +61,22 @@ export class CourseServiceGraphql {
   async getAllCourses(): Promise<{ id: string }[]> {
     const result = await this.apollo
       .query<{ getAllCourses: { id: string }[] }>({
+        fetchPolicy: 'network-only',
         query: GET_ALL_COURSES,
       })
       .toPromise();
 
     return result?.data?.getAllCourses || [];
+  }
+
+  getStudentsForCourses(code: string): Observable<any> {
+    return this.apollo
+      .query({
+        query: GET_STUDENT_COURSES,
+        fetchPolicy: 'network-only',
+        variables: { code: code },
+      })
+      .pipe(map((result: any) => result.data?.course));
   }
 
   createCourse(courseData: { name: string }): Observable<any> {
