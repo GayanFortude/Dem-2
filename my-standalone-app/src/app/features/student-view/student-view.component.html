@@ -4,44 +4,60 @@
       <kendo-card width="360px">
         <kendo-card-header class="k-hstack">
           <div>
-            <h1 kendoCardTitle>File handling</h1>
-          </div>
-        </kendo-card-header>
-        <kendo-card-body class="card-body">
-          <div class="custom-upload">
-            <input type="file" id="fileInput" (change)="onUpload($event)" hidden />
-            <label for="fileInput" class="upload-btn">Select files...</label>
-            <div class="upload-list" *ngIf="selectedFile">
-              <span class="file-icon">📄</span>
-              <span class="file-name">{{ selectedFile.name }}</span>
-              <span class="file-error" *ngIf="uploadError">File failed to upload.</span>
-              <button class="retry-btn" *ngIf="uploadError" (click)="retryUpload()">↻</button>
-              <button class="delete-btn" (click)="removeFile()">✖</button>
-            </div>
-          </div>
-        </kendo-card-body>
-      </kendo-card>
-      <kendo-card width="360px">
-        <kendo-card-header class="k-hstack">
-          <div>
-            <h1 kendoCardTitle>Manual handling</h1>
+            <h1 kendoCardTitle>Action handling</h1>
           </div>
         </kendo-card-header>
         <kendo-card-body class="card-body">
           <button
             class="card-button"
-            [svgIcon]="userIcon"
+            [svgIcon]="plusIcon"
+            title="Create Student"
             kendoButton
             (click)="onAdd()"
           ></button>
           <button
             class="card-button"
-            [svgIcon]="redoIcon"
+            title="Refresh"
+            [svgIcon]="arrowRotateCwIcon"
             kendoButton
             (click)="refresh()"
           ></button>
+        </kendo-card-body>
+      </kendo-card>
+      <kendo-card width="360px">
+        <kendo-card-header class="k-hstack">
+          <div>
+            <h1 kendoCardTitle>File handling</h1>
+          </div>
+        </kendo-card-header>
+        <kendo-card-body class="card-body">
+          <div class="custom-upload">
+            <input
+              type="file"
+              id="fileInput"
+              (change)="onUpload($event)"
+              hidden
+            />
+            <label for="fileInput" class="upload-btn">Select files...</label>
+            <div class="upload-list" *ngIf="selectedFile">
+              <span class="file-icon">📄</span>
+              <span class="file-name">{{ selectedFile.name }}</span>
+              <span class="file-error" *ngIf="uploadError"
+                >File failed to upload.</span
+              >
+              <button
+                class="retry-btn"
+                *ngIf="uploadError"
+                (click)="retryUpload()"
+              >
+                ↻
+              </button>
+              <button class="delete-btn" (click)="removeFile()">✖</button>
+            </div>
+          </div>
           <button
             class="card-button"
+            title="Download Excel"
             [svgIcon]="downloadIcon"
             kendoButton
             (click)="downloadFile()"
@@ -98,6 +114,23 @@
           </ng-template>
         </kendo-grid-command-column>
       </kendo-grid>
+      <kendo-dialog
+        title="Please confirm"
+        (close)="close('cancel')"
+        [minWidth]="250"
+        *ngIf="opened"
+        [width]="450"
+      >
+        <p style="margin: 30px; text-align: center">
+          Are you sure you want to Delete?
+        </p>
+        <kendo-dialog-actions>
+          <button kendoButton (click)="close('no')">No</button>
+          <button kendoButton (click)="close('yes')" themeColor="primary">
+            Yes
+          </button>
+        </kendo-dialog-actions>
+      </kendo-dialog>
       <app-student-view-edit-modal
         [model]="editDataItem"
         [isNew]="isNew"

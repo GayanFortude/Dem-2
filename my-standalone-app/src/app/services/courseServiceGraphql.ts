@@ -47,7 +47,6 @@ export class CourseServiceGraphql {
           if (values.length === 0) {
             this.completed = true;
           } else {
-            //  this.data = reset ? [...values] : [...this.data, ...values];
             this.data = reset ? [...values] : [...this.data, ...values];
             this.observable.next(this.data);
             this.skip += values.length;

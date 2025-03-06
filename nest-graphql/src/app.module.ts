@@ -4,7 +4,6 @@ import { BullModule } from '@nestjs/bull';
 import { Student } from './Students/entities/student.entity';
 import { StudentModule } from './Students/student.module';
 import { KafkaModule } from './kafka/kafka.module';
-
 import { ExcelModule } from './queue/excel.module';
 
 

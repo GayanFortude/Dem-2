@@ -88,6 +88,7 @@ export class StudentViewEditModalComponent {
   public onChangeCourse(value: Date): void {
     this.course=value
   }
+  
   public onSave(e: Event): void {
     this.editForm.patchValue({dob:this.dateUI})
     this.editForm.patchValue({courseID:this.course})

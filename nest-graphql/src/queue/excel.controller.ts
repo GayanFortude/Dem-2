@@ -43,13 +43,13 @@ export class ExcelController {
     const cookieHeader = req.headers['cookie'];
     if (!cookieHeader) {
       return {
-        statusCode: HttpStatus.BAD_REQUEST,
+         statusCode: HttpStatus.BAD_REQUEST,
          message: 'No token provided in cookies',
       };
     }
     if (!file) {
       return {
-        statusCode: HttpStatus.BAD_REQUEST,
+         statusCode: HttpStatus.BAD_REQUEST,
          message: 'No file uploaded',
       };
     }

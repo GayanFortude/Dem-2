@@ -89,6 +89,6 @@ export class CourseResolver {
 
   @ResolveReference()
   resolvereferance(ref: { __typename: string; code: string }) {
-    return this.courseService.findById(ref.code);
+    return this.courseService.findByCode(ref.code);
   }
 }

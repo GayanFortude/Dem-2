@@ -1,12 +1,9 @@
 import {
-  ConsoleLogger,
   Injectable,
   OnApplicationShutdown,
-  OnModuleInit,
 } from '@nestjs/common';
 import {
   Consumer,
-  ConsumerConfig,
   ConsumerRunConfig,
   ConsumerSubscribeTopic,
   Kafka,

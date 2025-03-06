@@ -53,8 +53,8 @@ export class StudentServiceGraphql {
           if (values.length === 0) {
             this.completed = true;
           } else {
-            //  this.data = reset ? [...values] : [...this.data, ...values];
-            this.data = [...this.data, ...values];
+            this.data = reset ? [...values] : [...this.data, ...values];
+            // this.data = [...this.data, ...values];
             this.observable.next(this.data);
             this.skip += take;
           }

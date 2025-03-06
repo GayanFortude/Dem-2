@@ -4,19 +4,21 @@
       <kendo-card width="360px">
         <kendo-card-header class="k-hstack">
           <div>
-            <h1 kendoCardTitle>Manual handling</h1>
+            <h1 kendoCardTitle>Action handling</h1>
           </div>
         </kendo-card-header>
         <kendo-card-body class="card-body">
           <button
             class="card-button"
-            [svgIcon]="userIcon"
+            [svgIcon]="plusIcon"
+            title="Create Course"
             kendoButton
             (click)="onAdd()"
           ></button>
           <button
             class="card-button"
-            [svgIcon]="redoIcon"
+            title="Refresh"
+            [svgIcon]="arrowRotateCwIcon"
             kendoButton
             (click)="loadMore()"
           ></button>

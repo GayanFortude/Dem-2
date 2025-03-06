@@ -15,7 +15,11 @@ import { SVGIcon } from '@progress/kendo-svg-icons';
 import { State } from '@progress/kendo-data-query';
 import { ExcelExportModule } from '@progress/kendo-angular-excel-export';
 import { Observable, Subject, switchMap, timer } from 'rxjs';
-import { DialogModule } from '@progress/kendo-angular-dialog';
+import {
+  DialogModule,
+  DialogService,
+  KENDO_DIALOGS,
+} from '@progress/kendo-angular-dialog';
 import { InputsModule } from '@progress/kendo-angular-inputs';
 import { LabelModule } from '@progress/kendo-angular-label';
 import { HttpClientJsonpModule } from '@angular/common/http';
@@ -27,7 +31,13 @@ import { SocketIoModule } from 'ngx-socket-io';
 import { environment } from '../../environment';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { FileDownloadService } from '../../services/FiledownloadService';
-import { redoIcon, userIcon, downloadIcon } from '@progress/kendo-svg-icons';
+import {
+  redoIcon,
+  userIcon,
+  downloadIcon,
+  arrowRotateCwIcon,
+  plusIcon
+} from '@progress/kendo-svg-icons';
 import { FiledownloadComponent } from './filedownload/filedownload.component';
 import { CourseServiceGraphql } from '../../services/courseServiceGraphql';
 
@@ -37,6 +47,7 @@ import { CourseServiceGraphql } from '../../services/courseServiceGraphql';
     FormsModule,
     ExcelExportModule,
     KENDO_GRID,
+    KENDO_DIALOGS,
     GridModule,
     CommonModule,
     DialogModule,
@@ -60,7 +71,8 @@ export class StudentViewComponent {
     private studentgraph: StudentServiceGraphql,
     private wsService: WebSocketService,
     private notificationService: NotificationService,
-    private fileDownloadService: FileDownloadService
+    private fileDownloadService: FileDownloadService,
+    private dialogService: DialogService
   ) {}
 
   public data: Observable<Student[]> = new Observable<Student[]>();
@@ -79,10 +91,10 @@ export class StudentViewComponent {
   public userIcon: SVGIcon = userIcon;
   public redoIcon: SVGIcon = redoIcon;
   public downloadIcon: SVGIcon = downloadIcon;
-
+  public arrowRotateCwIcon: SVGIcon = arrowRotateCwIcon;
+  public plusIcon: SVGIcon = plusIcon;
 
   ngOnInit() {
-
     this.loadMore();
 
     this.scrollSubject.pipe(switchMap(() => timer(100))).subscribe(() => {
@@ -97,8 +109,14 @@ export class StudentViewComponent {
       if (filePath != null) {
         this.fileDownloadService.downloadFile(filePath);
       }
+      if(event=="file-uploaded"){
+        if(type=="success"){
+          console.log("File uploaded successfully");
+          this.studentgraph.resetPagination();
+          this.loadMore(true);
+        }
+      }
     });
-
   }
 
   private handleNotification(
@@ -123,23 +141,28 @@ export class StudentViewComponent {
     this.wsService.disconnect();
   }
 
-
   selectedFile: File | null = null;
   uploadError: boolean = false;
 
-  
   async onUpload(event: any): Promise<any> {
     if (event.target.files.length === 0) {
       return;
     }
-  
+
     this.selectedFile = event.target.files[0];
     const formData = new FormData();
     if (this.selectedFile) {
-      const validFileTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
+      const validFileTypes = [
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-excel',
+      ];
       if (!validFileTypes.includes(this.selectedFile.type)) {
         this.uploadError = true;
-        this.handleNotification('message', 'Please select a valid Excel file (.xls or .xlsx)', 'error');
+        this.handleNotification(
+          'message',
+          'Please select a valid Excel file (.xls or .xlsx)',
+          'error'
+        );
         return;
       }
       formData.append('file', this.selectedFile);
@@ -148,47 +171,55 @@ export class StudentViewComponent {
     document.cookie = 'token=user1; path=/;';
 
     try {
-   
       const response = await fetch(this.fileuploadEndpoint, {
         method: 'POST',
         credentials: 'include',
         body: formData,
       });
-  
+
       if (response.ok) {
-        console.log("File uploaded successfully");
+        console.log('File uploaded successfully');
         this.uploadError = false;
-        this.selectedFile = null; 
+        this.selectedFile = null;
         const result = await response.json();
-        this.handleNotification('message', `File saved successfully`, 'success');
+        this.handleNotification(
+          'message',
+          `File saved successfully`,
+          'success'
+        );
       } else {
         this.uploadError = true;
-        this.handleNotification('message', `An error occurred during file upload`, 'error');
+        this.handleNotification(
+          'message',
+          `An error occurred during file upload`,
+          'error'
+        );
       }
     } catch (error) {
       this.uploadError = true;
-      this.handleNotification('message', `An error occurred during file upload: ${error}`, 'error');
+      this.handleNotification(
+        'message',
+        `An error occurred during file upload: ${error}`,
+        'error'
+      );
     }
   }
-  
+
   retryUpload() {
     if (this.selectedFile) {
       const fakeEvent = { target: { files: [this.selectedFile] } };
       this.onUpload(fakeEvent);
     }
   }
-  
+
   removeFile() {
     this.selectedFile = null;
     this.uploadError = false;
   }
-  
 
-
-  refresh(){
-    window.location.reload()
+  refresh() {
+    window.location.reload();
   }
-
 
   public loadMore(reset: boolean = false): void {
     this.loading = true;
@@ -205,7 +236,6 @@ export class StudentViewComponent {
     });
   }
 
- 
   public editDataItem: any = {};
   public isNew: boolean = false;
 
@@ -239,23 +269,38 @@ export class StudentViewComponent {
     this.isNew = true;
   }
 
+  public opened = false;
+  public courseId = '';
+  public close(status: string): void {
+    if (status == 'yes') {
+      console.log(status);
+      this.studentgraph.deleteStudent(this.courseId).subscribe({
+        next: (response) => {
+          if (response) {
+            this.handleNotification(
+              'message',
+              `Data deleted successfully`,
+              'success'
+            );
+            this.studentgraph.resetPagination();
+            this.loadMore(true);
+          }
+        },
+        error: (err) => {
+          this.handleNotification('message', `Error deleting student`, 'error');
+        },
+      });
+    }
+    this.opened = false;
+  }
+
+  public open(): void {
+    this.opened = true;
+  }
+
   public removeHandler(args: RemoveEvent): void {
-    this.studentgraph.deleteStudent(args.dataItem.id).subscribe({
-      next: (response) => {
-        if (response) {
-          this.handleNotification(
-            'message',
-            `Data deleted successfully`,
-            'success'
-          );
-          this.studentgraph.resetPagination();
-          this.loadMore(true);
-        }
-      },
-      error: (err) => {
-        this.handleNotification('message', `Error creating user`, 'error');
-      },
-    });
+    this.opened = true;
+    this.courseId = args.dataItem.id;
   }
 
   public async saveFileHandler(data: any) {
@@ -372,5 +417,4 @@ export class StudentViewComponent {
   onScrollBottom(): void {
     this.scrollSubject.next();
   }
-
 }

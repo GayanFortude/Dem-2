@@ -21,7 +21,7 @@ import { HttpClientJsonpModule } from '@angular/common/http';
 import { UploadsModule } from '@progress/kendo-angular-upload';
 import { SocketIoModule } from 'ngx-socket-io';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { redoIcon, userIcon, downloadIcon } from '@progress/kendo-svg-icons';
+import { redoIcon, userIcon, downloadIcon ,arrowRotateCwIcon,plusIcon} from '@progress/kendo-svg-icons';
 import { ManageCoursesComponent } from './manage-courses/manage-courses.component';
 import { CourseServiceGraphql } from '../../services/courseServiceGraphql';
 import { CourseStudentComponent } from './course-student/course-student.component';
@@ -59,8 +59,10 @@ export class CoursesComponent {
       this.loadMore(false);
     });
   }
+
   private scrollSubject = new Subject<void>();
   public data: Observable<any[]> = new Observable<Course[]>();
+  public arrowRotateCwIcon: SVGIcon = arrowRotateCwIcon;
 
   public loading: boolean = false;
   private pageSize = 10;
@@ -75,6 +77,7 @@ export class CoursesComponent {
   public userIcon: SVGIcon = userIcon;
   public redoIcon: SVGIcon = redoIcon;
   public downloadIcon: SVGIcon = downloadIcon;
+ public plusIcon: SVGIcon = plusIcon;
 
   ngOnInit() {
     this.loadMore();

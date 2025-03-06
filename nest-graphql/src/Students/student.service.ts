@@ -19,28 +19,29 @@ export class StudentService {
     private readonly _kafka: ProducerService,
   ) {}
 
-
   async create(createStudentInput: CreateStudentInputDto): Promise<Student> {
     //save data
     try {
-      const newStudent =
-        await this.studentRepository.create(createStudentInput);
+      const newStudent = await this.studentRepository.create(createStudentInput);
       return this.studentRepository.save(newStudent); // retrive data
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
   }
 
-
- 
-
-  async createTopic(message: string, user: string, filePath: string, type: 'success' | 'error' = 'success') {
+  async createTopic(
+    message: string,
+    user: string,
+    filePath: string,
+    type: 'success' | 'error' = 'success',
+  ) {
     try {
-      const payload = { //payload to send
-        message,         
-        user, 
-        filePath,           
-        type,           
+      const payload = {
+        //payload to send
+        message,
+        user,
+        filePath,
+        type,
         timestamp: new Date().toISOString(),
       };
 
@@ -49,21 +50,19 @@ export class StudentService {
         topic: 'create-employee',
         messages: [
           {
-            key: user,              
-            value: JSON.stringify(payload), 
+            key: user,
+            value: JSON.stringify(payload),
           },
         ],
       });
-
     } catch (error) {
       throw error;
     }
   }
 
-
-  async forCourse(id: string) {
-    return await this.studentRepository.find({ where: { courseID: id } })
-}
+  async forCourse(code: string) {
+    return await this.studentRepository.find({ where: { courseID: code } });
+  }
 
   async bulkCreate(element: any): Promise<Student> {
     const student = this.studentRepository.create({
@@ -76,12 +75,10 @@ export class StudentService {
           86400 *
           1000,
       ),
-      courseID:element[environment.requiredFields[4]] as string,
+      courseID: element[environment.requiredFields[4]] as string,
     });
     return student;
   }
-
-  async bulkInsert(student: Student) {}
 
   calculateAge(dob: Date): number {
     //calculate age
@@ -98,8 +95,8 @@ export class StudentService {
     return age;
   }
 
-  async getAll(){
-    return  await this.studentRepository.find();
+  async getAll() {
+    return await this.studentRepository.find();
   }
 
   async findAll(limit: number, offset: number) {
@@ -117,7 +114,7 @@ export class StudentService {
       lname: d.lname,
       email: d.email,
       dob: d.dob,
-      courseID:d.courseID,
+      courseID: d.courseID,
       age: this.calculateAge(d.dob),
     }));
 
@@ -137,7 +134,8 @@ export class StudentService {
     };
   }
 
-  async update( //update
+  async update(
+    //update
     id: string,
     updateStudentInput: UpdateStudentInput,
   ): Promise<Student | null> {
@@ -193,7 +191,6 @@ export class StudentService {
       throw new InternalServerErrorException(error);
     }
   }
-  
 
   async getStudent(id: string): Promise<Student> {
     const student = await this.studentRepository.findOneBy({ id });
@@ -203,7 +200,6 @@ export class StudentService {
     return student;
   }
 
-  
   async findById(id: string): Promise<Student> {
     const student = await this.studentRepository.findOneBy({ id });
     if (!student) {
@@ -211,7 +207,4 @@ export class StudentService {
     }
     return student;
   }
-
-
-
 }

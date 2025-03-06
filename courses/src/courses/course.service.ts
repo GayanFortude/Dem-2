@@ -77,15 +77,8 @@ export class CourseService {
     }
   }
 
-  async find(p0: (course: any) => boolean) {
-    try {
-      return this.courseRepository.find();
-    } catch (error) {
-      throw new InternalServerErrorException(error);
-    }
-  }
 
-  async findById(code: string): Promise<Course> {
+  async findByCode(code: string): Promise<Course> {
     try {
       const course = await this.courseRepository.findOne({
         where: { code: code },
