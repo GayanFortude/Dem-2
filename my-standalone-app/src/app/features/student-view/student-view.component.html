@@ -1,8 +1,8 @@
 <div class="content-new">
   <div class="content-2">
     <diV class="card-list">
-      <kendo-card width="460px">
-        <kendo-card-header class="k-hstack"> 
+      <kendo-card width="500px">
+        <kendo-card-header class="k-hstack">
           <div>
             <h1 kendoCardTitle>Action handling</h1>
           </div>
@@ -30,7 +30,8 @@
           </div>
         </kendo-card-body>
       </kendo-card>
-      <kendo-card width="460px">
+
+      <kendo-card width="500px">
         <kendo-card-header class="k-hstack">
           <div>
             <h1 kendoCardTitle>File handling</h1>
@@ -122,11 +123,32 @@
           [width]="150"
           styles="card-list"
         >
+          <ng-template kendoGridLoadingTemplate>
+            <button kendoGridEditCommand [primary]="true">Edit</button>
+            <button kendoGridRemoveCommand>Delete</button>
+            <!-- <div class="k-loading-color"></div>
+            <div class="loading-container">
+              <kendo-loader
+                type="converging-spinner"
+                size="large"
+              ></kendo-loader>
+            </div> -->
+          </ng-template>
           <ng-template kendoGridCellTemplate>
             <button kendoGridEditCommand [primary]="true">Edit</button>
             <button kendoGridRemoveCommand>Delete</button>
           </ng-template>
         </kendo-grid-command-column>
+
+        <ng-template kendoGridLoadingTemplate>
+          <div class="k-loading-color"></div>
+          <div class="loading-container">
+            <kendo-loader
+              type="converging-spinner"
+              size="medium"
+            ></kendo-loader>
+          </div>
+        </ng-template>
       </kendo-grid>
       <kendo-dialog
         title="Please confirm"

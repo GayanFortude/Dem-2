@@ -25,6 +25,7 @@ import { redoIcon, userIcon, downloadIcon ,arrowRotateCwIcon,plusIcon} from '@pr
 import { ManageCoursesComponent } from './manage-courses/manage-courses.component';
 import { CourseServiceGraphql } from '../../services/courseServiceGraphql';
 import { CourseStudentComponent } from './course-student/course-student.component';
+import { IndicatorsModule } from '@progress/kendo-angular-indicators';
 
 @Component({
   selector: 'app-courses',
@@ -43,7 +44,8 @@ import { CourseStudentComponent } from './course-student/course-student.componen
     HttpClientJsonpModule,
     UploadsModule,
     SocketIoModule,
-    CourseStudentComponent
+    CourseStudentComponent,
+    IndicatorsModule
   ],
   providers: [CourseServiceGraphql],
   templateUrl: './courses.component.html',

@@ -39,6 +39,7 @@ import {
 } from '@progress/kendo-svg-icons';
 import { FiledownloadComponent } from './filedownload/filedownload.component';
 import { CourseServiceGraphql } from '../../services/courseServiceGraphql';
+import { IndicatorsModule } from "@progress/kendo-angular-indicators";
 
 @Component({
   selector: 'app-student-view',
@@ -59,6 +60,7 @@ import { CourseServiceGraphql } from '../../services/courseServiceGraphql';
     HttpClientJsonpModule,
     UploadsModule,
     SocketIoModule,
+    IndicatorsModule
   ],
   templateUrl: './student-view.component.html',
   providers: [StudentServiceGraphql, CourseServiceGraphql],

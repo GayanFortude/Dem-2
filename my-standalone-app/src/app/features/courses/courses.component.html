@@ -60,6 +60,15 @@
           </ng-template>
         </kendo-grid-command-column>
         >
+        <ng-template kendoGridLoadingTemplate>
+          <div class="k-loading-color"></div>
+          <div class="loading-container">
+            <kendo-loader
+              type="converging-spinner"
+              size="medium"
+            ></kendo-loader>
+          </div>
+        </ng-template>
       </kendo-grid>
       <app-course-student
         [model]="editStudentItem"
