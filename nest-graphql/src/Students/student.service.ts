@@ -22,7 +22,8 @@ export class StudentService {
   async create(createStudentInput: CreateStudentInputDto): Promise<Student> {
     //save data
     try {
-      const newStudent = await this.studentRepository.create(createStudentInput);
+      const newStudent =
+        await this.studentRepository.create(createStudentInput);
       return this.studentRepository.save(newStudent); // retrive data
     } catch (error) {
       throw new InternalServerErrorException(error);
@@ -47,7 +48,7 @@ export class StudentService {
 
       // Produce the Kafka message
       await this._kafka.produce({
-        topic: 'create-employee',
+        topic: 'student-topic',
         messages: [
           {
             key: user,
@@ -82,6 +83,7 @@ export class StudentService {
 
   calculateAge(dob: Date): number {
     //calculate age
+    console.log(dob);
     const today = new Date();
     const birthDate = new Date(dob);
     let age = today.getFullYear() - birthDate.getFullYear();
@@ -175,16 +177,17 @@ export class StudentService {
       if (!data) {
         throw new NotFoundException();
       }
-      const filteredStudents = data
-        .filter((d) => this.calculateAge(d.dob) < age)
-        .map((d) => ({
-          id: d.id,
-          fname: d.fname,
-          lname: d.lname,
-          email: d.email,
-          dob: d.dob,
-          age: this.calculateAge(d.dob),
-        }));
+
+      const studentsAge = data.map((d) => ({
+        id: d.id,
+        fname: d.fname,
+        lname: d.lname,
+        email: d.email,
+        dob: d.dob,
+        courseID: d.courseID,
+        age: this.calculateAge(d.dob),
+      }));
+      const filteredStudents = studentsAge.filter((d) => d.age < age);
 
       return filteredStudents;
     } catch (error) {

@@ -45,11 +45,14 @@ export class ExcelProcessor {
 
   @Process('download-excel')
   async handleDownloadExcel(job: Job<{ object: any; token: any }>) {
+ 
     const { object, token } = job.data;
     try {
       await this.downloadExcel(object, token);
+      console.log("download",object)
       return { success: true };
     } catch (error) {
+      console.log("download",object)
       throw error;
     }
   }
@@ -113,38 +116,38 @@ export class ExcelProcessor {
     }
   }
 
-  async downloadExcel(file: string, user: string) {
+  async downloadExcel(age: string, user: string) {
     //download excel
     try {
       const workbook = new Workbook(); //generate excel
       const worksheet = workbook.addWorksheet('Students');
 
       worksheet.columns = [
-        { header: 'ID', key: 'id', width: 10 },
         { header: 'First Name', key: 'fname', width: 30 },
         { header: 'Last Name', key: 'lname', width: 30 },
-        { header: 'Age', key: 'age', width: 30 },
+        { header: 'Email', key: 'email', width: 50 },
+        { header: 'Age', key: 'age', width: 10 },
       ];
-      const students = await this.studentsService.getStudentsByAge(file);
+      const students = await this.studentsService.getStudentsByAge(age); //Get data
       students.forEach((student) => {
         worksheet.addRow({
-          id: student.id,
           fname: student.fname,
           lname: student.lname,
+          email: student.email,
           age: student.age,
         });
       });
 
-      const uploadDir = path.join(__dirname, '..', 'uploads');
+      const uploadDir =await path.join(__dirname, '..', 'uploads');
       await fs.ensureDir(uploadDir); //upload file
 
-      const filePath = path.join(uploadDir, `students_${1}.xlsx`);
+      const filePath =await path.join(uploadDir, `students_${age}.xlsx`);
       await workbook.xlsx.writeFile(filePath);
       await this.studentsService.createTopic(
         // Return file path
         'File Downloaded successfully',
         user,
-        `students_${1}.xlsx`,
+        `students_${age}.xlsx`,
         'success',
       );
     } catch (error) {

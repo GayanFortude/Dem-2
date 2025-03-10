@@ -30,7 +30,13 @@ export class ExcelService {
   }
 
   async processdownloadExcel(object: number, token: any) { //download queue
-    await this.studentqueue.add('download-excel', { object, token });
+    console.log("process",object)
+    await this.studentqueue.add('download-excel', { object, token }, {
+      attempts: 3,
+      backoff: 5000,
+      removeOnComplete: true,
+      removeOnFail: false,
+    },);
   }
 
   async updateFileStatus(filePath: any){   //update file status

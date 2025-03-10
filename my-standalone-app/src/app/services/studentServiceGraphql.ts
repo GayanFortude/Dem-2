@@ -33,9 +33,10 @@ export class StudentServiceGraphql {
     if (this.completed) {
       return from([true]);
     }
+    
     take = 10;
+
     if (reset) {
-      
       this.skip = 0;
       this.data = []; 
     }

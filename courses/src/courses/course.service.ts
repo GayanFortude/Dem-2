@@ -78,13 +78,13 @@ export class CourseService {
   }
 
 
-  async findByCode(code: string): Promise<Course> {
+  async findByCode(code: string): Promise<Course | null> {
     try {
       const course = await this.courseRepository.findOne({
         where: { code: code },
       });
       if (!course) {
-        throw new NotFoundException(`Course with ID ${code} not found`);
+        return null;
       }
       return course;
     } catch (error) {

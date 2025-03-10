@@ -1,67 +1,81 @@
 <div class="content-new">
   <div class="content-2">
     <diV class="card-list">
-      <kendo-card width="360px">
-        <kendo-card-header class="k-hstack">
+      <kendo-card width="460px">
+        <kendo-card-header class="k-hstack"> 
           <div>
             <h1 kendoCardTitle>Action handling</h1>
           </div>
         </kendo-card-header>
         <kendo-card-body class="card-body">
-          <button
-            class="card-button"
-            [svgIcon]="plusIcon"
-            title="Create Student"
-            kendoButton
-            (click)="onAdd()"
-          ></button>
-          <button
-            class="card-button"
-            title="Refresh"
-            [svgIcon]="arrowRotateCwIcon"
-            kendoButton
-            (click)="refresh()"
-          ></button>
+          <div class="card-cell">
+            <h1 kendoCardTitle>Create Students</h1>
+            <button
+              class="card-button"
+              [svgIcon]="plusIcon"
+              title="Create Student"
+              kendoButton
+              (click)="onAdd()"
+            ></button>
+          </div>
+          <div class="card-cell">
+            <h1 kendoCardTitle>Refresh</h1>
+            <button
+              class="card-button"
+              title="Refresh"
+              [svgIcon]="arrowRotateCwIcon"
+              kendoButton
+              (click)="refresh()"
+            ></button>
+          </div>
         </kendo-card-body>
       </kendo-card>
-      <kendo-card width="360px">
+      <kendo-card width="460px">
         <kendo-card-header class="k-hstack">
           <div>
             <h1 kendoCardTitle>File handling</h1>
           </div>
         </kendo-card-header>
         <kendo-card-body class="card-body">
-          <div class="custom-upload">
-            <input
-              type="file"
-              id="fileInput"
-              (change)="onUpload($event)"
-              hidden
-            />
-            <label for="fileInput" class="upload-btn">Select files...</label>
-            <div class="upload-list" *ngIf="selectedFile">
-              <span class="file-icon">📄</span>
-              <span class="file-name">{{ selectedFile.name }}</span>
-              <span class="file-error" *ngIf="uploadError"
-                >File failed to upload.</span
-              >
-              <button
-                class="retry-btn"
-                *ngIf="uploadError"
-                (click)="retryUpload()"
-              >
-                ↻
-              </button>
-              <button class="delete-btn" (click)="removeFile()">✖</button>
+          <div class="card-cell">
+            <h1 kendoCardTitle>Upload Excel</h1>
+            <div class="custom-upload">
+              <input
+                class="card-button"
+                type="file"
+                id="fileInput"
+                (change)="onUpload($event)"
+                hidden
+              />
+              <label for="fileInput" class="upload-btn">Select files...</label>
+              <div class="upload-list" *ngIf="selectedFile">
+                <span class="file-icon">📄</span>
+                <span class="file-name">{{ selectedFile.name }}</span>
+                <span class="file-error" *ngIf="uploadError"
+                  >File failed to upload.</span
+                >
+                <button
+                  class="retry-btn"
+                  *ngIf="uploadError"
+                  (click)="retryUpload()"
+                >
+                  ↻
+                </button>
+                <button class="delete-btn" (click)="removeFile()">✖</button>
+              </div>
             </div>
           </div>
-          <button
-            class="card-button"
-            title="Download Excel"
-            [svgIcon]="downloadIcon"
-            kendoButton
-            (click)="downloadFile()"
-          ></button>
+
+          <div class="card-cell">
+            <h1 kendoCardTitle>Download Excel</h1>
+            <button
+              class="card-button"
+              title="Download Excel"
+              [svgIcon]="downloadIcon"
+              kendoButton
+              (click)="downloadFile()"
+            ></button>
+          </div>
         </kendo-card-body>
       </kendo-card>
     </diV>

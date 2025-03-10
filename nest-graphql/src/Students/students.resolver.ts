@@ -96,9 +96,12 @@ export class StudentResolver {
     }
   }
 
-  @ResolveField((of) => Course)
-  course(@Parent() student: Student) {
-    return { __typename: 'course', code: student.courseID };
+  @ResolveField(() => Course, { nullable: true })
+  async course(@Parent() student: Student) {
+    if (!student.courseID) {
+      return null; // No course ID, return null
+    }
+    return { __typename: 'Course', code: student.courseID }; // Return a reference
   }
 
 }

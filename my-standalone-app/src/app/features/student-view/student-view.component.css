@@ -69,7 +69,17 @@ kendo-drawer-container {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 110%;
   height: 100%;
+}
+
+
+.card-cell {
+  width: 50%;
+  display: flex; 
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 /* .custom-content-column {

@@ -97,9 +97,7 @@ export class CoursesComponent {
     });
   }
 
-  async downloadFile() {
-    this.isNewFile = true;
-  }
+
 
   async onUpload(event: any): Promise<any> {
     if (event.files.length === 0) {

@@ -1,27 +1,33 @@
 <div class="content-new">
   <div class="content-2">
     <diV class="card-list">
-      <kendo-card width="360px">
+      <kendo-card width="460px">
         <kendo-card-header class="k-hstack">
           <div>
             <h1 kendoCardTitle>Action handling</h1>
           </div>
         </kendo-card-header>
         <kendo-card-body class="card-body">
-          <button
-            class="card-button"
-            [svgIcon]="plusIcon"
-            title="Create Course"
-            kendoButton
-            (click)="onAdd()"
-          ></button>
-          <button
-            class="card-button"
-            title="Refresh"
-            [svgIcon]="arrowRotateCwIcon"
-            kendoButton
-            (click)="loadMore()"
-          ></button>
+          <div class="card-cell">
+            <h1 kendoCardTitle>Create Courses</h1>
+            <button
+              class="card-button"
+              [svgIcon]="plusIcon"
+              title="Create Course"
+              kendoButton
+              (click)="onAdd()"
+            ></button>
+          </div>
+          <div class="card-cell">
+            <h1 kendoCardTitle>Refresh</h1>
+            <button
+              class="card-button"
+              title="Refresh"
+              [svgIcon]="arrowRotateCwIcon"
+              kendoButton
+              (click)="loadMore()"
+            ></button>
+          </div>
         </kendo-card-body>
       </kendo-card>
     </diV>

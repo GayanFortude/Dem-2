@@ -74,12 +74,22 @@ export class StudentViewEditModalComponent {
     }
   }
 
-  pastDateValidator(control: AbstractControl): ValidationErrors | null { //Date validator
+  pastDateValidator(control: AbstractControl): ValidationErrors | null {
     const inputDate = new Date(control.value);
     const today = new Date();
     today.setHours(0, 0, 0, 0); 
+  
+    const minDate = new Date('1900-01-01'); 
+    minDate.setHours(0, 0, 0, 0);
+  
+    if (inputDate >= today) {
+      return { futureDate: true };
+    }
 
-    return inputDate >= today ? { futureDate: true } : null;
+    if (inputDate <= minDate) {
+      return { tooOld: true };
+    }
+    return null;
   }
   public onChange(value: Date): void {
     this.dateUI=value //Catch date change
@@ -88,7 +98,7 @@ export class StudentViewEditModalComponent {
   public onChangeCourse(value: Date): void {
     this.course=value
   }
-  
+
   public onSave(e: Event): void {
     this.editForm.patchValue({dob:this.dateUI})
     this.editForm.patchValue({courseID:this.course})
@@ -102,9 +112,9 @@ export class StudentViewEditModalComponent {
     this.closeForm();
   }
 
-
   public closeForm(): void {
     this.active = false;
     this.cancel.emit();
   }
+
 }

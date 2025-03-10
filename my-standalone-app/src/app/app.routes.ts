@@ -10,7 +10,7 @@ export const routes: Routes = [
         pathMatch: "full"
     },
     {
-        path: "Home",
+        path: "student",
         component: StudentViewComponent
     },
     {

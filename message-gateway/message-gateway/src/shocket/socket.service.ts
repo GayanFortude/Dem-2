@@ -21,7 +21,7 @@ export class SocketService implements OnModuleInit, OnModuleDestroy {
   async onModuleInit() {
     this._consumer.consume(
       'create-client',
-      { topic: 'create-employee' },
+      { topic: 'student-topic' },
       {
         eachMessage: async ({ topic, partition, message }) => {
           const value = message.value
@@ -30,7 +30,7 @@ export class SocketService implements OnModuleInit, OnModuleDestroy {
           this.sendMessageToUser;
           console.log(value);
           const payloadSuccess = {
-            event: 'file-uploaded',
+            event: 'file-handling',
             data: {
               message: value?.message ? value.message : null,
               filePath: value?.filePath ? value.filePath : null,
@@ -50,10 +50,10 @@ export class SocketService implements OnModuleInit, OnModuleDestroy {
         },
       },
     );
+    
     this.redisClient = await this.newRedisClient();
     this.subscriberClient = await this.newRedisClient();
     this.publisherClient = await this.newRedisClient();
-
     this.subscriberClient.subscribe(this.serviceId);
 
     this.subscriberClient.on('message', (channel, message) => {

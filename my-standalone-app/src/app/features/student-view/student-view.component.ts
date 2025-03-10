@@ -17,7 +17,6 @@ import { ExcelExportModule } from '@progress/kendo-angular-excel-export';
 import { Observable, Subject, switchMap, timer } from 'rxjs';
 import {
   DialogModule,
-  DialogService,
   KENDO_DIALOGS,
 } from '@progress/kendo-angular-dialog';
 import { InputsModule } from '@progress/kendo-angular-inputs';
@@ -72,7 +71,6 @@ export class StudentViewComponent {
     private wsService: WebSocketService,
     private notificationService: NotificationService,
     private fileDownloadService: FileDownloadService,
-    private dialogService: DialogService
   ) {}
 
   public data: Observable<Student[]> = new Observable<Student[]>();
@@ -95,13 +93,13 @@ export class StudentViewComponent {
   public plusIcon: SVGIcon = plusIcon;
 
   ngOnInit() {
-    this.loadMore();
-
-    this.scrollSubject.pipe(switchMap(() => timer(100))).subscribe(() => {
+    this.loadMore(); //Load more data
+  
+    this.scrollSubject.pipe(switchMap(() => timer(100))).subscribe(() => { //Scroll
       this.loadMore(false);
     });
 
-    this.wsService.listen().subscribe((d) => {
+    this.wsService.listen().subscribe((d) => { //Web shocket
       const parsedData = JSON.parse(d);
       const { event, data } = parsedData;
       const { message, filePath, userId, type, timestamp } = data;
@@ -109,7 +107,7 @@ export class StudentViewComponent {
       if (filePath != null) {
         this.fileDownloadService.downloadFile(filePath);
       }
-      if(event=="file-uploaded"){
+      if(event=="file-handling"){
         if(type=="success"){
           console.log("File uploaded successfully");
           this.studentgraph.resetPagination();
@@ -138,7 +136,7 @@ export class StudentViewComponent {
   }
 
   ngOnDestroy() {
-    this.wsService.disconnect();
+   // this.wsService.disconnect();
   }
 
   selectedFile: File | null = null;
@@ -168,7 +166,7 @@ export class StudentViewComponent {
       formData.append('file', this.selectedFile);
     }
 
-    document.cookie = 'token=user1; path=/;';
+    document.cookie = 'token=user0; path=/;';
 
     try {
       const response = await fetch(this.fileuploadEndpoint, {
@@ -306,7 +304,7 @@ export class StudentViewComponent {
   public async saveFileHandler(data: any) {
     try {
       this.studentgraph
-        .downloadStudent(parseInt(data.age), 'token=user1')
+        .downloadStudent(parseInt(data.age), 'token=user0')
         .subscribe({
           next: (response) => {
             if (response) {
@@ -414,7 +412,7 @@ export class StudentViewComponent {
     this.isNewFile = false;
   }
   private scrollSubject = new Subject<void>();
-  onScrollBottom(): void {
+    onScrollBottom(): void {
     this.scrollSubject.next();
   }
 }

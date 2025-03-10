@@ -12,15 +12,13 @@ export class WebSocketService {
   private messages: Subject<any> = new Subject();
 
   constructor() {
-
-
-    const port = 3005;
-    document.cookie = 'token=user1; path=/';
+ 
+    document.cookie = 'token=user0; path=/';
     //`ws://localhost:${port}`
     this.socket = new WebSocket(environment.shocketio);
     this.socket.onopen = () => {
-      console.log(`Connected to WebSocket on port ${port}`);
-      this.socket.send(JSON.stringify({ cookie: 'token=user1' }));
+      console.log(`Connected to WebSocket on port 3006`);
+      this.socket.send(JSON.stringify({ cookie: 'token=user0' }));
     };
     this.socket.onmessage = (event) => {
       this.messages.next(JSON.parse(event.data));

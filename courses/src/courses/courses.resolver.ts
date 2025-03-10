@@ -88,7 +88,12 @@ export class CourseResolver {
   }
 
   @ResolveReference()
-  resolvereferance(ref: { __typename: string; code: string }) {
-    return this.courseService.findByCode(ref.code);
+ async resolvereferance(ref: { __typename: string; code: string }) {
+    const course= await this.courseService.findByCode(ref.code);
+    if (!course) {
+      return null; // Safe fallback
+    }
+
+    return course;
   }
 }
