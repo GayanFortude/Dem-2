@@ -281,19 +281,4 @@ export class StudentService {
     }
   }
 
-  // async getStudent(id: string): Promise<Student> {
-  //   const student = await this.studentRepository.findOneBy({ id });
-  //   if (!student) {
-  //     throw new NotFoundException(`Student with ID ${id} not found`);
-  //   }
-  //   return student;
-  // }
-
-  // async findById(id: string): Promise<Student> {
-  //   const student = await this.studentRepository.findOneBy({ id });
-  //   if (!student) {
-  //     throw new NotFoundException(`Student with ID ${id} not found`);
-  //   }
-  //   return student;
-  // }
 }
