@@ -20,9 +20,7 @@ import * as fs from 'fs';
 
 @Controller('excel')
 export class ExcelController {
-  constructor(
-    private readonly excelService: ExcelService,
-  ) {}
+  constructor(private readonly excelService: ExcelService) {}
 
   @Post('upload')
   @UseInterceptors(
@@ -39,43 +37,60 @@ export class ExcelController {
       }),
     }),
   )
-  async uploadFile(@UploadedFile() file: Express.Multer.File,@Req() req: Request,@Res() res: Response) {
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
     const cookieHeader = req.headers['cookie'];
     if (!cookieHeader) {
-      return {
-         statusCode: HttpStatus.BAD_REQUEST,
-         message: 'No token provided in cookies',
-      };
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'No token provided in cookies',
+      });
     }
     if (!file) {
-      return {
-         statusCode: HttpStatus.BAD_REQUEST,
-         message: 'No file uploaded',
-      };
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'No file uploaded',
+      });
     }
+
     const filePath = path.join(__dirname, '../uploads', file.filename);
-    const object={
-      filePath:filePath,
-      user:cookieHeader
+    const object = {
+      filePath: filePath,
+      user: cookieHeader,
+    };
+
+    try {
+      // Attempt to process the file and add the job to the queue
+      await this.excelService.processExcel(object);
+      return res.status(HttpStatus.OK).json({
+        statusCode: HttpStatus.OK,
+        message: 'File uploaded and processing started successfully',
+        data: {
+          fileName: file.filename,
+        },
+      });
+    } catch (error) {
+      // If there is any error in processing the file or adding to the queue
+      console.error('Error in file processing:', error);
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Failed to process the file',
+      });
     }
-    await this.excelService.processExcel(object);
-  
-    return await res.status(HttpStatus.OK).json({
-      statusCode: HttpStatus.OK,
-      message: 'File uploaded successfully',
-      data: {
-        fileName: file.filename,
-      },
-    });
   }
 
   @Get('download')
-  async downloadExcelNew(@Res() res: Response, @Query('filePath') filePath: string) {
+  async downloadExcelNew(
+    @Res() res: Response,
+    @Query('filePath') filePath: string,
+  ) {
     try {
       const uploadDir = path.join(__dirname, '..', 'uploads');
       const fullPath = path.join(uploadDir, filePath);
 
-     
       if (!fs.existsSync(fullPath)) {
         console.error('File not found:', fullPath);
         return res.status(404).json({ message: 'File not found' });

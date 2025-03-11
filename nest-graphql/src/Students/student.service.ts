@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -10,13 +11,15 @@ import { UpdateStudentInput } from './dto/updateStudentInput';
 import { Student } from './entities/student.entity';
 import { ProducerService } from 'src/kafka/poducer/producer.service';
 import { environment } from 'src/common/environment';
+import { CacheService } from 'src/cache/cache.service';
 
 @Injectable()
 export class StudentService {
   constructor(
-    @InjectRepository(Student)
+    @ InjectRepository(Student)
     private readonly studentRepository: Repository<Student>,
     private readonly _kafka: ProducerService,
+    private cache: CacheService,
   ) {}
 
   async create(createStudentInput: CreateStudentInputDto): Promise<Student> {
@@ -24,6 +27,9 @@ export class StudentService {
     try {
       const newStudent =
         await this.studentRepository.create(createStudentInput);
+      await this.cache.removeCacheList(
+        `OrderService:orders:group:${newStudent.courseID}`,
+      );
       return this.studentRepository.save(newStudent); // retrive data
     } catch (error) {
       throw new InternalServerErrorException(error);
@@ -60,12 +66,41 @@ export class StudentService {
       throw error;
     }
   }
-
+  removeAllCache() {
+     this.cache.removeAllCache();
+  }
   async forCourse(code: string) {
-    return await this.studentRepository.find({ where: { courseID: code } });
+    //
+    const key = `OrderService:orders:group:${code}`;
+    var studentReturn;
+
+    const cached = await this.cache.readListFromCache(key, 0, -1);
+    if (cached && cached.length > 0) {
+      studentReturn = cached.map((element) => JSON.parse(element));
+    } else {
+      const students = await this.studentRepository.find({
+        where: { courseID: code },
+      });
+
+      const studentsAge = students.map((d) => ({
+        id: d.id,
+        fname: d.fname,
+        lname: d.lname,
+        email: d.email,
+        dob: d.dob,
+        courseID: d.courseID,
+        age: this.calculateAge(d.dob),
+      }));
+
+      await this.cache.cacheList(key, studentsAge, 60000);
+      studentReturn = students;
+    }
+
+    return await studentReturn;
   }
 
   async bulkCreate(element: any): Promise<Student> {
+    
     const student = this.studentRepository.create({
       //create objects
       fname: element[environment.requiredFields[0]] as string,
@@ -100,41 +135,70 @@ export class StudentService {
   async getAll() {
     return await this.studentRepository.find();
   }
-
   async findAll(limit: number, offset: number) {
-    //find all
-    const studentcount = await this.studentRepository.findAndCount(); //Count rows
-
-    const studentDB = await this.studentRepository.find({
-      skip: offset,
-      take: limit,
-    }); //retrive data
-
-    const students = studentDB.map((d) => ({
-      id: d.id,
-      fname: d.fname,
-      lname: d.lname,
-      email: d.email,
-      dob: d.dob,
-      courseID: d.courseID,
-      age: this.calculateAge(d.dob),
-    }));
-
-    if (!studentDB) {
-      throw new NotFoundException();
+    // Validate limit and offset
+    if (!Number.isInteger(limit) || limit <= 0) {
+      throw new BadRequestException('Limit must be a positive integer');
     }
-
-    const paginationStudent = {
-      //Bind data
-      total: studentcount[1],
-      page: offset,
-      limit: limit,
-    };
-    return {
-      student: students,
-      paginationObject: paginationStudent,
-    };
+    if (!Number.isInteger(offset) || offset < 0) {
+      throw new BadRequestException('Offset must be a non-negative integer');
+    }
+  
+    try {
+      // Count total students
+      const studentCount = await this.studentRepository.count();
+  
+      // Calculate page from offset and limit (page starts from 1)
+      const page = Math.floor(offset / limit) + 1;
+  
+      // Retrieve students with pagination
+      const studentDB = await this.studentRepository.find({
+        skip: offset,
+        take: limit,
+      });
+  
+      if (!studentDB || studentDB.length === 0) {
+        return {
+          students: [],
+          pagination: {
+            total: studentCount,
+            page,
+            limit,
+            totalPages: Math.ceil(studentCount / limit),
+          },
+        };
+      }
+  
+      // Map student data with calculated age
+      const students = studentDB.map((d) => ({
+        id: d.id,
+        fname: d.fname,
+        lname: d.lname,
+        email: d.email,
+        dob: d.dob,
+        courseID: d.courseID,
+        age: this.calculateAge(d.dob),
+      }));
+  
+      // Pagination response
+      const paginationStudent = {
+        total: studentCount,
+        page,
+        limit,
+        totalPages: Math.ceil(studentCount / limit), // Add totalPages
+      };
+  
+      return {
+        students,
+        pagination: paginationStudent,
+      };
+    } catch (error) {
+      console.error(error); // Log the error for debugging
+      throw new InternalServerErrorException('Failed to retrieve students');
+    }
   }
+  
+
 
   async update(
     //update
@@ -142,12 +206,24 @@ export class StudentService {
     updateStudentInput: UpdateStudentInput,
   ): Promise<Student | null> {
     try {
-      const student = await this.studentRepository.find({ where: { id } });
+      const student = await this.studentRepository.findOne({ where: { id } });
       if (!student) {
         throw new NotFoundException();
       }
+      await this.cache.removeCacheList(
+        `OrderService:orders:group:${student.courseID}`,
+      );
       await this.studentRepository.update(id, updateStudentInput);
-      return this.studentRepository.findOne({ where: { id } });
+      const returnData = await this.studentRepository.findOne({
+        where: { id },
+      });
+      if (!returnData) {
+        throw new NotFoundException(`Student with ID ${id} not found`);
+      }
+      await this.cache.removeCacheList(
+        `OrderService:orders:group:${returnData.courseID}`,
+      );
+      return returnData;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -159,6 +235,9 @@ export class StudentService {
       if (!student) {
         throw new NotFoundException();
       }
+      await this.cache.removeCacheList(
+        `OrderService:orders:group:${student.courseID}`,
+      );
       const result = await this.studentRepository.delete({ id: id });
       if (result.affected == 0) {
         return false;

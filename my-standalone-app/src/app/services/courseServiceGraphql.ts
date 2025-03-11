@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
-import { Observable, BehaviorSubject, from } from 'rxjs';
+import { Observable, BehaviorSubject, from, lastValueFrom } from 'rxjs';
 import { finalize, map, tap } from 'rxjs/operators';
 import {
   CREATE_COURSES,
@@ -9,6 +9,7 @@ import {
   GET_STUDENT_COURSES,
   UPDATE_COURSES,
 } from '../core/graphql.operations';
+import { ApolloQueryResult } from '@apollo/client/core';
 
 @Injectable()
 export class CourseServiceGraphql {
@@ -57,15 +58,21 @@ export class CourseServiceGraphql {
       );
   }
 
-  async getAllCourses(): Promise<{ id: string }[]> {
-    const result = await this.apollo
-      .query<{ getAllCourses: { id: string }[] }>({
-        fetchPolicy: 'network-only',
-        query: GET_ALL_COURSES,
-      })
-      .toPromise();
-
-    return result?.data?.getAllCourses || [];
+  async getAllCourses(): Promise<{ id: string; name: string; code: string }[]> {
+    try {
+      const result: ApolloQueryResult<{ getAllCourses: { id: string; name: string; code: string }[] }> = 
+        await lastValueFrom(
+          this.apollo.query<{ getAllCourses: { id: string; name: string; code: string }[] }>({
+            query: GET_ALL_COURSES,
+            fetchPolicy: 'network-only',
+          })
+        );
+  
+      return result?.data?.getAllCourses || [];
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+      return [];
+    }
   }
 
   getStudentsForCourses(code: string): Observable<any> {

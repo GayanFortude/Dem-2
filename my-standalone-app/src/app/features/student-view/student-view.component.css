@@ -73,6 +73,9 @@ kendo-drawer-container {
   height: 100%;
 }
 
+.k-card-header{
+  justify-content: center;
+}
 
 .loading-container {
   height: 100%;
@@ -264,3 +267,9 @@ p {
   font-size: 16px;
 }
 
+
+.kendoCardTitleSmaller {
+  font-size: 0.9em; 
+  font-weight: normal;
+  line-height: 1.2; 
+}

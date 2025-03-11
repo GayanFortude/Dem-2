@@ -44,6 +44,7 @@ export class ManageCoursesComponent {
 
   @Input() public set model(course: Course) {
     if (course != undefined) {
+      this.getCourses();
       if (Object.keys(course).length !== 0) {
         this.active = true;
         this.editForm.get('code')?.disable();
@@ -76,7 +77,7 @@ export class ManageCoursesComponent {
   courses: { id: string }[] = [];
   constructor(private courseService: CourseServiceGraphql) {}
 
-  async ngOnInit(): Promise<void> {
+  async getCourses(): Promise<void> {
     try {
       this.courses = await this.courseService.getAllCourses();
     } catch (error) {

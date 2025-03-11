@@ -91,7 +91,7 @@ export class CourseResolver {
  async resolvereferance(ref: { __typename: string; code: string }) {
     const course= await this.courseService.findByCode(ref.code);
     if (!course) {
-      return null; // Safe fallback
+      return null; 
     }
 
     return course;

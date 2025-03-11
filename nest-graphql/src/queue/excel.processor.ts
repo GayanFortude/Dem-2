@@ -95,6 +95,7 @@ export class ExcelProcessor {
 
       await queryRunner.commitTransaction();
       await this.excelService.updateFileStatus(filePath);
+      await this.studentsService.removeAllCache()
       await this.studentsService.createTopic(
         `Processing complete. Total rows: ${excelRowCount}, Saved rows: ${savedCount}`,
         user,

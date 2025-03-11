@@ -9,9 +9,11 @@ import {
 } from '@nestjs/graphql';
 import {
   BadRequestException,
+  HttpStatus,
   InternalServerErrorException,
   Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { CreateStudentInputDto } from './dto/CreateStudentInputDto';
 import { UpdateStudentInput } from './dto/updateStudentInput';
 import { Student } from './entities/student.entity';
@@ -19,6 +21,7 @@ import { StudentResponse } from './objects/studentResponse';
 import { StudentService } from './student.service';
 import { ExcelService } from 'src/queue/excel.service';
 import { Course } from './dto/courseDto';
+import { CacheService } from 'src/cache/cache.service';
 
 @Resolver(() => Student)
 export class StudentResolver {
@@ -27,30 +30,57 @@ export class StudentResolver {
     private excelService: ExcelService,
   ) {}
 
-  @Query(() => StudentResponse) //Get User
+  @Query(() => StudentResponse) // Get Students
   async getStudent(
-    @Args('limit', { type: () => Int, defaultValue: 10 }) limit: number,
-    @Args('offset', { type: () => Int, defaultValue: 0 }) offset: number,
+    @Args('limit', { type: () => Int, nullable: true, defaultValue: 10 })
+    limit: number,
+    @Args('offset', { type: () => Int, nullable: true, defaultValue: 0 })
+    offset: number,
   ): Promise<StudentResponse> {
-    const response = await this.studentsService.findAll(limit, offset);
-    return response
-  }
+    // Validate limit and offset
+    if (!Number.isInteger(limit) || limit <= 0) {
+      throw new BadRequestException('Limit must be a positive integer');
+    }
+    if (!Number.isInteger(offset) || offset < 0) {
+      throw new BadRequestException('Offset must be a non-negative integer');
+    }
 
+    try {
+      const result = await this.studentsService.findAll(limit, offset);
+      return {
+        student: result.students,
+        paginationObject: result.pagination,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to retrieve students');
+    }
+  }
 
   @Query(() => [Student], { name: 'getAllStudent' })
   findAll() {
     return this.studentsService.getAll();
   }
-
   @Query(() => String, { name: 'downloadExcel' })
-  async downloadExcel(
-    @Args('age', { type: () => Int, defaultValue: 10 }) age: number,
-    @Args('token', { type: () => String, defaultValue: '10' }) token: string,
-    @Res() res: Response,
-  ) {
-    await this.excelService.processdownloadExcel(age, token);
-    return 'File uploaded successfully';
+async downloadExcel(
+  @Args('age', { type: () => Int, defaultValue: 10 }) age: number,
+  @Args('token', { type: () => String, defaultValue: '10' }) token: string,
+) {
+  try {
+    // Await the processing of the Excel download and ensure the job is added to the queue
+    const job = await this.excelService.processdownloadExcel(age, token);
+
+    // Return a success message with job details after the job is successfully added to the queue
+    return `Download job successfully added to the queue jobId ${job.id}`
+       // You can optionally include the job ID for reference
+    
+  } catch (error) {
+    // If something goes wrong, handle the error by throwing a GraphQL error
+    throw new Error('Failed to add job to the queue');
   }
+}
+
+  
+  
 
   @Mutation(() => Student) //Create user
   async createStudent(
@@ -99,9 +129,8 @@ export class StudentResolver {
   @ResolveField(() => Course, { nullable: true })
   async course(@Parent() student: Student) {
     if (!student.courseID) {
-      return null; // No course ID, return null
+      return null;
     }
     return { __typename: 'Course', code: student.courseID }; // Return a reference
   }
-
 }

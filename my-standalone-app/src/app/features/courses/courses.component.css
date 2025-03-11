@@ -27,6 +27,10 @@ kendo-drawer-container {
   font-size: 20px;
 }
 
+.k-card-header{
+  justify-content: center;
+}
+
 .custom-toolbar {
   width: 100%;
   background-color: gray;
@@ -206,4 +210,11 @@ p {
   flex: 1;
   height: 100%; /* Ensures the grid takes full height */
   min-height: 0; /* Prevents unwanted overflow issues */
+}
+
+
+.kendoCardTitleSmaller {
+  font-size: 0.9em; 
+  font-weight: normal;
+  line-height: 1.2; 
 }

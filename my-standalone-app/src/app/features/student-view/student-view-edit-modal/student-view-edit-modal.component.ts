@@ -35,7 +35,7 @@ export class StudentViewEditModalComponent {
         dob: this.dateDB,
         courseId: student.courseID || null
       });
-      this.ngOnInit();
+      this.getCourses();
     }
     this.dateUI=this.dateDB
   }
@@ -62,7 +62,7 @@ export class StudentViewEditModalComponent {
   constructor(private courseService: CourseServiceGraphql){
   }
 
-  ngOnInit(): void {
+  getCourses(): void {
     this.loadCourses(); // Fetch courses when component initializes
   }
   public courses: { id: string }[] = [];

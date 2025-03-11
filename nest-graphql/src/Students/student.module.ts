@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { StudentResolver } from './students.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Student } from './entities/student.entity';
@@ -9,6 +9,8 @@ import { KafkaModule } from 'src/kafka/kafka.module';
 import { SharedModule } from 'src/common/sharedmodule';
 import { Course } from './dto/courseDto';
 import { CourseResolver } from './course.resolver';
+import { CacheService } from 'src/cache/cache.service';
+import { AppModule } from 'src/app.module';
 
 
 @Module({

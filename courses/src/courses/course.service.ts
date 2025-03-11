@@ -26,7 +26,7 @@ export class CourseService {
       });
       return courses;
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(error.message);
     }
   }
 
@@ -35,7 +35,7 @@ export class CourseService {
       const courses = await this.courseRepository.find();
       return courses;
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(error.message);
     }
   }
 
@@ -45,18 +45,22 @@ export class CourseService {
     updateCourseInput: UpdateCourseInput,
   ): Promise<Course | null> {
     try {
-      const course = await this.courseRepository.find({ where: { id } });
+      const course = await this.courseRepository.findOne({ where: { id } });
       if (!course) {
-        throw new NotFoundException();
+        throw new NotFoundException(`Course with ID ${id} not found`);
       }
       await this.courseRepository.update(id, updateCourseInput);
       return this.courseRepository.findOne({ where: { id } });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      throw new InternalServerErrorException(error.message);
     }
   }
 
-  async create(createCourseInput: CreateCourseInput): Promise<Course> { //Create
+  async create(createCourseInput: CreateCourseInput): Promise<Course> {
+    //Create
     try {
       const id = await this.courseRepository.findOne({
         where: { code: createCourseInput.code },
@@ -73,10 +77,9 @@ export class CourseService {
       });
       return this.courseRepository.save(course);
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(error.message);
     }
   }
-
 
   async findByCode(code: string): Promise<Course | null> {
     try {
@@ -88,7 +91,7 @@ export class CourseService {
       }
       return course;
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(error.message);
     }
   }
 
@@ -102,7 +105,10 @@ export class CourseService {
       }
       return course;
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      throw new InternalServerErrorException(error.message);
     }
   }
 }

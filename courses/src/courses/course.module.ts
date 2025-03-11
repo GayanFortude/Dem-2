@@ -11,7 +11,7 @@ import { CourseService } from './course.service';
   controllers:[],
   imports:[
     TypeOrmModule.forFeature([Course]),
-    GraphQLModule.forRoot<ApolloFederationDriverConfig>({
+     GraphQLModule.forRoot<ApolloFederationDriverConfig>({
       driver: ApolloFederationDriver,
       autoSchemaFile: {
         federation: 2,
