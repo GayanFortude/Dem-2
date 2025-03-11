@@ -25,6 +25,8 @@ export class NavBarComponent {
     public menuSvg: SVGIcon = menuIcon;
     public onSelect(event: DrawerSelectEvent): void {
       this.router.navigate([event.item.route]); 
+      localStorage.setItem('token', 'token=user0');
+
     }
   
     public items: Array<CustomDrawerItem> = [

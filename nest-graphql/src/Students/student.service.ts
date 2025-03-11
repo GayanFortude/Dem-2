@@ -16,7 +16,7 @@ import { CacheService } from 'src/cache/cache.service';
 @Injectable()
 export class StudentService {
   constructor(
-    @ InjectRepository(Student)
+    @InjectRepository(Student)
     private readonly studentRepository: Repository<Student>,
     private readonly _kafka: ProducerService,
     private cache: CacheService,
@@ -28,11 +28,11 @@ export class StudentService {
       const newStudent =
         await this.studentRepository.create(createStudentInput);
       await this.cache.removeCacheList(
-        `OrderService:orders:group:${newStudent.courseID}`,
+        `Studentservice:student:${newStudent.courseID}`,
       );
       return this.studentRepository.save(newStudent); // retrive data
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(error.message);
     }
   }
 
@@ -67,11 +67,12 @@ export class StudentService {
     }
   }
   removeAllCache() {
-     this.cache.removeAllCache();
+    //remove cache
+    this.cache.removeAllCache();
   }
   async forCourse(code: string) {
     //
-    const key = `OrderService:orders:group:${code}`;
+    const key = `Studentservice:student:${code}`;
     var studentReturn;
 
     const cached = await this.cache.readListFromCache(key, 0, -1);
@@ -100,7 +101,6 @@ export class StudentService {
   }
 
   async bulkCreate(element: any): Promise<Student> {
-    
     const student = this.studentRepository.create({
       //create objects
       fname: element[environment.requiredFields[0]] as string,
@@ -143,20 +143,20 @@ export class StudentService {
     if (!Number.isInteger(offset) || offset < 0) {
       throw new BadRequestException('Offset must be a non-negative integer');
     }
-  
+
     try {
       // Count total students
       const studentCount = await this.studentRepository.count();
-  
+
       // Calculate page from offset and limit (page starts from 1)
       const page = Math.floor(offset / limit) + 1;
-  
+
       // Retrieve students with pagination
       const studentDB = await this.studentRepository.find({
         skip: offset,
         take: limit,
       });
-  
+
       if (!studentDB || studentDB.length === 0) {
         return {
           students: [],
@@ -168,7 +168,7 @@ export class StudentService {
           },
         };
       }
-  
+
       // Map student data with calculated age
       const students = studentDB.map((d) => ({
         id: d.id,
@@ -179,7 +179,7 @@ export class StudentService {
         courseID: d.courseID,
         age: this.calculateAge(d.dob),
       }));
-  
+
       // Pagination response
       const paginationStudent = {
         total: studentCount,
@@ -187,18 +187,16 @@ export class StudentService {
         limit,
         totalPages: Math.ceil(studentCount / limit), // Add totalPages
       };
-  
+
       return {
         students,
         pagination: paginationStudent,
       };
     } catch (error) {
       console.error(error); // Log the error for debugging
-      throw new InternalServerErrorException('Failed to retrieve students');
+      throw new InternalServerErrorException(error.message);
     }
   }
-  
-
 
   async update(
     //update
@@ -211,7 +209,7 @@ export class StudentService {
         throw new NotFoundException();
       }
       await this.cache.removeCacheList(
-        `OrderService:orders:group:${student.courseID}`,
+        `Studentservice:student:${student.courseID}`,
       );
       await this.studentRepository.update(id, updateStudentInput);
       const returnData = await this.studentRepository.findOne({
@@ -221,11 +219,14 @@ export class StudentService {
         throw new NotFoundException(`Student with ID ${id} not found`);
       }
       await this.cache.removeCacheList(
-        `OrderService:orders:group:${returnData.courseID}`,
+        `Studentservice:student:${returnData.courseID}`,
       );
       return returnData;
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      throw new InternalServerErrorException(error.message);
     }
   }
   async deleteStudent(id: string): Promise<boolean> {
@@ -236,7 +237,7 @@ export class StudentService {
         throw new NotFoundException();
       }
       await this.cache.removeCacheList(
-        `OrderService:orders:group:${student.courseID}`,
+        `Studentservice:student:${student.courseID}`,
       );
       const result = await this.studentRepository.delete({ id: id });
       if (result.affected == 0) {
@@ -245,7 +246,10 @@ export class StudentService {
         return true;
       }
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      throw new InternalServerErrorException(error.message);
     }
   }
 
@@ -270,23 +274,26 @@ export class StudentService {
 
       return filteredStudents;
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      throw new InternalServerErrorException(error.message);
     }
   }
 
-  async getStudent(id: string): Promise<Student> {
-    const student = await this.studentRepository.findOneBy({ id });
-    if (!student) {
-      throw new NotFoundException(`Student with ID ${id} not found`);
-    }
-    return student;
-  }
+  // async getStudent(id: string): Promise<Student> {
+  //   const student = await this.studentRepository.findOneBy({ id });
+  //   if (!student) {
+  //     throw new NotFoundException(`Student with ID ${id} not found`);
+  //   }
+  //   return student;
+  // }
 
-  async findById(id: string): Promise<Student> {
-    const student = await this.studentRepository.findOneBy({ id });
-    if (!student) {
-      throw new NotFoundException(`Student with ID ${id} not found`);
-    }
-    return student;
-  }
+  // async findById(id: string): Promise<Student> {
+  //   const student = await this.studentRepository.findOneBy({ id });
+  //   if (!student) {
+  //     throw new NotFoundException(`Student with ID ${id} not found`);
+  //   }
+  //   return student;
+  // }
 }

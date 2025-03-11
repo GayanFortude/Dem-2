@@ -128,6 +128,7 @@ export class ExcelProcessor {
         { header: 'Last Name', key: 'lname', width: 30 },
         { header: 'Email', key: 'email', width: 50 },
         { header: 'Age', key: 'age', width: 10 },
+        { header: 'Dath of Birth', key: 'dob', width: 30 },
       ];
       const students = await this.studentsService.getStudentsByAge(age); //Get data
       students.forEach((student) => {
@@ -136,6 +137,7 @@ export class ExcelProcessor {
           lname: student.lname,
           email: student.email,
           age: student.age,
+          dob: student.dob,
         });
       });
 

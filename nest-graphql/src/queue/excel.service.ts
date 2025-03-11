@@ -33,7 +33,6 @@ export class ExcelService {
         },
       );
   
-      // Optionally, log the job or return something useful if needed
       console.log('Job added to the queue with ID:', job.id);
   
       return job; // Returning the job can be useful for tracking or debugging purposes

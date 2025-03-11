@@ -4,12 +4,14 @@
       <kendo-card width="500px">
         <kendo-card-header class="k-hstack">
           <div>
-            <h1 kendoCardTitle style="font-weight: bold;">Action handling</h1>
+            <h1 kendoCardTitle style="font-weight: bold">Action handling</h1>
           </div>
         </kendo-card-header>
         <kendo-card-body class="card-body">
           <div class="card-cell">
-            <h1 kendoCardTitle class="kendoCardTitleSmaller">Create Students</h1>
+            <h1 kendoCardTitle class="kendoCardTitleSmaller">
+              Create Students
+            </h1>
             <button
               class="card-button"
               [svgIcon]="plusIcon"
@@ -19,7 +21,7 @@
             ></button>
           </div>
           <div class="card-cell">
-            <h1 kendoCardTitle  class="kendoCardTitleSmaller">Refresh</h1>
+            <h1 kendoCardTitle class="kendoCardTitleSmaller">Refresh</h1>
             <button
               class="card-button"
               title="Refresh"
@@ -34,7 +36,7 @@
       <kendo-card width="500px">
         <kendo-card-header class="k-hstack">
           <div>
-            <h1 kendoCardTitle style="font-weight: bold;">File handling</h1>
+            <h1 kendoCardTitle style="font-weight: bold">File handling</h1>
           </div>
         </kendo-card-header>
         <kendo-card-body class="card-body">
@@ -126,13 +128,6 @@
           <ng-template kendoGridLoadingTemplate>
             <button kendoGridEditCommand [primary]="true">Edit</button>
             <button kendoGridRemoveCommand>Delete</button>
-            <!-- <div class="k-loading-color"></div>
-            <div class="loading-container">
-              <kendo-loader
-                type="converging-spinner"
-                size="large"
-              ></kendo-loader>
-            </div> -->
           </ng-template>
           <ng-template kendoGridCellTemplate>
             <button kendoGridEditCommand [primary]="true">Edit</button>

@@ -5,8 +5,7 @@ import { Student } from './Students/entities/student.entity';
 import { StudentModule } from './Students/student.module';
 import { KafkaModule } from './kafka/kafka.module';
 import { ExcelModule } from './queue/excel.module';
-import { RedisModule } from '@nestjs-modules/ioredis';
-import { CacheService } from './cache/cache.service';
+
 
 @Module({
   imports: [StudentModule,KafkaModule,ExcelModule,

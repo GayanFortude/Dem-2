@@ -9,11 +9,8 @@ import {
 } from '@nestjs/graphql';
 import {
   BadRequestException,
-  HttpStatus,
   InternalServerErrorException,
-  Res,
 } from '@nestjs/common';
-import { Response } from 'express';
 import { CreateStudentInputDto } from './dto/CreateStudentInputDto';
 import { UpdateStudentInput } from './dto/updateStudentInput';
 import { Student } from './entities/student.entity';
@@ -21,7 +18,7 @@ import { StudentResponse } from './objects/studentResponse';
 import { StudentService } from './student.service';
 import { ExcelService } from 'src/queue/excel.service';
 import { Course } from './dto/courseDto';
-import { CacheService } from 'src/cache/cache.service';
+
 
 @Resolver(() => Student)
 export class StudentResolver {
@@ -66,22 +63,19 @@ async downloadExcel(
   @Args('token', { type: () => String, defaultValue: '10' }) token: string,
 ) {
   try {
-    // Await the processing of the Excel download and ensure the job is added to the queue
+    // job is added to the queue
     const job = await this.excelService.processdownloadExcel(age, token);
 
-    // Return a success message with job details after the job is successfully added to the queue
+    // Return a success message with job details 
     return `Download job successfully added to the queue jobId ${job.id}`
-       // You can optionally include the job ID for reference
     
   } catch (error) {
-    // If something goes wrong, handle the error by throwing a GraphQL error
+   
     throw new Error('Failed to add job to the queue');
   }
 }
 
   
-  
-
   @Mutation(() => Student) //Create user
   async createStudent(
     @Args('createStudentInputDto') createStudentInputDto: CreateStudentInputDto,

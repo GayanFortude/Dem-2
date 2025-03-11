@@ -28,7 +28,7 @@ export class SocketService implements OnModuleInit, OnModuleDestroy {
             ? JSON.parse(message.value.toString())
             : null;
           this.sendMessageToUser;
-          console.log(value);
+         
           const payloadSuccess = {
             event: 'file-handling',
             data: {
